@@ -9,13 +9,13 @@
 	"b77b6210-ac50-4cb1-a3d5-5702fb9c744c",
 	"cb555efe-2d9e-131f-8195-a89329d218ea",
 	"e0a4d990-7b9b-8fa9-d7c6-04017c6cf5b1",
+	"77a2155f-4b35-4f0c-e7ff-4338f91426a4",
+	"6efc8f44-cc2a-0273-d4b1-681d3faa411b",
 	"e842840a-2449-588c-b0c4-22122cfce31b",
 	"ed539163-bb70-431b-96a7-f5b2eda5376b",
 	"ee4989eb-aab8-968f-8674-812ea2f4bfd7",
-	"ee5a55ff-eb38-0b27-c5b0-f358dc306d34",
-	"6efc8f44-cc2a-0273-d4b1-681d3faa411b",
-	"77a2155f-4b35-4f0c-e7ff-4338f91426a4",
-	"bf19bab4-4908-ef39-9065-ced469c0f877"
+	"bf19bab4-4908-ef39-9065-ced469c0f877",
+	"ee5a55ff-eb38-0b27-c5b0-f358dc306d34"
   ],
   "IgnoreBuiltinPath": [
 	"Game/GUI/Assets"
@@ -25,7 +25,7 @@
 	  "Name": "Gustav",
 	  "UUID": "991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1",
 	  "Folder": "Gustav",
-	  "Version": 36029301681017806,
+	  "Version": 36029301684370529,
 	  "Author": "Larian Studios",
 	  "Description": "The main story campaign dependency."
 	},
@@ -33,7 +33,7 @@
 	  "Name": "GustavDev",
 	  "UUID": "28ac9ce2-2aba-8cda-b3b5-6e922f71b6b8",
 	  "Folder": "GustavDev",
-	  "Version": 145241302737868847,
+	  "Version": 145241946983074840,
 	  "Author": "Larian Studios",
 	  "Description": ""
 	},
@@ -41,7 +41,7 @@
 	  "Name": "GustavX",
 	  "UUID": "cb555efe-2d9e-131f-8195-a89329d218ea",
 	  "Folder": "GustavX",
-	  "Version": 145241302737868847,
+	  "Version": 145241946983074840,
 	  "Author": "Larian Studios",
 	  "Description": "The main story campaign (patch 8+).",
 	  "Tags": "Campaign"
@@ -61,14 +61,6 @@
 	  "Version": 36028797025681607,
 	  "Author": "Larian Studios",
 	  "Description": ""
-	},
-	{
-	  "Name": "FW3",
-	  "UUID": "e5c9077e-1fca-4f24-b55d-464f512c98a8",
-	  "Folder": "FW3",
-	  "Version": 36028797018963968,
-	  "Author": "Larian Studios",
-	  "Description": "Shared project"
 	},
 	{
 	  "Name": "Engine",
@@ -146,7 +138,7 @@
 	  "Name": "Honour",
 	  "UUID": "b77b6210-ac50-4cb1-a3d5-5702fb9c744c",
 	  "Folder": "Honour",
-	  "Version": 36028797025769519,
+	  "Version": 36028797025881112,
 	  "Author": "Larian Studios",
 	  "Description": "Honour difficulty mode."
 	},
@@ -154,7 +146,7 @@
 	  "Name": "HonourX",
 	  "UUID": "767d0062-d82c-279c-e16b-dfee7fe94cdd",
 	  "Folder": "HonourX",
-	  "Version": 36028797025769519,
+	  "Version": 36028797025881112,
 	  "Author": "Larian Studios",
 	  "Description": ""
 	},

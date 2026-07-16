@@ -125,8 +125,8 @@
 						<CheckBox x:Name="IncludeOverridesCheckbox"
 						    Margin="8"
 						    HorizontalAlignment="Center"
-						    Content="包含覆盖型模组 (Overrides)"
-						    ToolTip="将所有未启用的覆盖型模组 (.pak) 也一并打包到压缩包中。" />
+						    Content="同时打包覆盖型模组（Overrides）"
+						    ToolTip="把 Mods 文件夹中所有直接生效、无需排序的覆盖型 .pak 模组也加入压缩包。" />
 						<ComboBox Name="OrderTypeComboBox" />
 					</StackPanel>
 					<StackPanel Grid.Row="2" Orientation="Horizontal">

@@ -152,7 +152,7 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 		{
 			if (UUID == DivinityApp.MAIN_CAMPAIGN_UUID || String.Equals(Name, "Main", StringComparison.OrdinalIgnoreCase))
 			{
-				return "主线";
+				return "游戏本体（主线）";
 			}
 			return Name;
 		}
@@ -349,7 +349,7 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 
 		if (endorsements > 0)
 		{
-			lines.Add($"推荐数：{endorsements}");
+			lines.Add($"NexusMods 点赞数：{endorsements}");
 		}
 
 		if (createdDate != DateTime.MinValue)
@@ -376,7 +376,7 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 
 	private string BuildMissingDependencyToolTip()
 	{
-		return $"缺少依赖项：\n{string.Join(Environment.NewLine, MissingDependencies.Items.Select(x => x.Name).Order())}";
+		return $"缺少前置（依赖）模组：\n{string.Join(Environment.NewLine, MissingDependencies.Items.Select(x => x.Name).Order())}";
 	}
 
 	private static bool CanAllowInLoadOrderCheck(string modType, bool isLarianMod, bool isForceLoaded, bool isMergedMod, bool forceAllowInLoadOrder)
@@ -563,8 +563,8 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 			.Select(x => x switch
 			{
 				"Adventure" => "冒险",
-				"File Override" => "文件覆盖",
-				"Add-on" => "附加模组",
+				"File Override" => "覆盖型模组",
+				"Add-on" => "普通模组",
 				_ => x
 			})
 			.ToUIProperty(this, x => x.DisplayModType, string.Empty);

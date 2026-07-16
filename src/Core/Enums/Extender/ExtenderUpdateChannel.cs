@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 
-namespace DivinityModManager.Enums.Extender;
+namespace DivinityModManager;
 
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ExtenderUpdateChannel

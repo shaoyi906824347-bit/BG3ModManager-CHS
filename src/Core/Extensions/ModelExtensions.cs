@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Reflection;
 
 namespace DivinityModManager.Extensions;
 
@@ -29,6 +30,21 @@ public static class ModelExtensions
 	{
 		var props = TypeDescriptor.GetProperties(target.GetType());
 		foreach (PropertyDescriptor pr in props)
+		{
+			var value = pr.GetValue(from);
+			if (value != null)
+			{
+				pr.SetValue(target, value);
+				target.RaisePropertyChanged(pr.Name);
+			}
+		}
+	}
+
+	public static void SetFrom<T, T2>(this T target, T from) where T : ReactiveObject where T2 : Attribute
+	{
+		var attributeType = typeof(T2);
+		var props = typeof(T).GetRuntimeProperties().Where(prop => Attribute.IsDefined(prop, attributeType)).ToList();
+		foreach (var pr in props)
 		{
 			var value = pr.GetValue(from);
 			if (value != null)

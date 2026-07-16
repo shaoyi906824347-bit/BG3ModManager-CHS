@@ -54,7 +54,7 @@
 			    Rows="auto,*">
 				<TextBlock Background="{DynamicResource {x:Static adonisUI:Brushes.Layer4BackgroundBrush}}"
 				    FontSize="20"
-				    Text="新模组"
+				    Text="检测到的新模组"
 				    TextAlignment="Center" />
 				<controls:ModListView x:Name="NewFilesModListView"
 				    BorderThickness="0"

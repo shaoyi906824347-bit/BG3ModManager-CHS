@@ -96,7 +96,7 @@ public class AppKeys : ReactiveObject
 	//[MenuSettings("View", "Toggle Updates View")]
 	public Hotkey ToggleUpdatesView { get; private set; } = new Hotkey();
 
-	[MenuSettings("转到", "打开模组存放文件夹 (Mods)")]
+	[MenuSettings("转到", "打开模组存放文件夹（Mods）")]
 	public Hotkey OpenModsFolder { get; private set; } = new Hotkey(Key.D1, ModifierKeys.Control);
 
 	[MenuSettings("转到", "打开游戏安装目录")]
@@ -117,7 +117,7 @@ public class AppKeys : ReactiveObject
 	[MenuSettings("工具", "打开模组版本号生成器...", Tooltip = "模组创作者工具，用于为模组的 meta.lsx 生成版本号")]
 	public Hotkey ToggleVersionGeneratorWindow { get; private set; } = new Hotkey(Key.G, ModifierKeys.Control);
 
-	[MenuSettings("工具", "在线下载并安装脚本扩展器 (Script Extender)...")]
+	[MenuSettings("工具", "在线下载并安装脚本扩展器（Script Extender）...")]
 	public Hotkey DownloadScriptExtender { get; private set; } = new Hotkey(Key.T, ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt);
 
 	[MenuSettings("工具", "语音朗读当前启用模组顺序")]
@@ -129,13 +129,13 @@ public class AppKeys : ReactiveObject
 	[MenuSettings("帮助", "检查模组管理器更新")]
 	public Hotkey CheckForUpdates { get; private set; } = new Hotkey(Key.F7);
 
-	[MenuSettings("帮助", "请作者喝杯咖啡 (赞助 LaughingLeader)...")]
+	[MenuSettings("帮助", "打开赞助页面（Ko-fi）...", Tooltip = "打开 https://ko-fi.com/laughingleader 赞助软件作者")]
 	public Hotkey OpenDonationLink { get; private set; } = new Hotkey(Key.F10);
 
 	[MenuSettings("帮助", "关于软件")]
 	public Hotkey OpenAboutWindow { get; private set; } = new Hotkey(Key.F1);
 
-	[MenuSettings("帮助", "打开官方 GitHub 页面...")]
+	[MenuSettings("帮助", "打开官方主页（GitHub）...")]
 	public Hotkey OpenRepositoryPage { get; private set; } = new Hotkey(Key.F11);
 
 	private readonly SourceCache<Hotkey, string> keyMap = new((hk) => hk.ID);

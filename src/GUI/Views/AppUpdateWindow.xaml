@@ -76,8 +76,8 @@
 				<Button x:Name="ConfirmButton"
 					HorizontalAlignment="Center"
 					Background="#FF267E26"
-					Content="下载并应用"
-					ToolTip="下载最新版本更新">
+					Content="下载官方版更新"
+					ToolTip="下载官方发布的新版本。官方版本为英文版，可能覆盖当前汉化，请先备份。">
 					<Button.Resources>
 						<Style TargetType="Border">
 							<Setter Property="CornerRadius" Value="5" />

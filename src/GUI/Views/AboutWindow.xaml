@@ -37,29 +37,29 @@
 		    Columns="1*,3*"
 		    RowCount="5"
 		    Rows="auto,auto,auto,auto,auto">
-			<TextBlock HorizontalAlignment="Right" Text="官方主页:" />
+			<TextBlock HorizontalAlignment="Right" Text="官方主页：" />
 			<c:HyperlinkText Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
 			    URL="{x:Static app:DivinityApp.URL_REPO}"
 			    UseUrlForDisplayText="True" />
 			<TextBlock Margin="0,0,0,4"
 			    HorizontalAlignment="Right"
-			    Text="软件作者:"
+			    Text="软件作者："
 			    TextAlignment="Left" />
 			<c:HyperlinkText Margin="10,0,0,0"
 			    HorizontalAlignment="Left"
 			    DisplayText="LaughingLeader"
 			    URL="{x:Static app:DivinityApp.URL_AUTHOR}" />
-			<TextBlock HorizontalAlignment="Right" Text="汉化:" />
+			<TextBlock HorizontalAlignment="Right" Text="汉化：" />
 			<TextBlock Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
-			    Text="可爱女陔王语嫣 (小黑盒 ID: 29602586)" />
-			<TextBlock HorizontalAlignment="Right" Text="反馈邮箱:" />
+			    Text="可爱女孩王语嫣 (小黑盒 ID: 29602586)" />
+			<TextBlock HorizontalAlignment="Right" Text="反馈邮箱：" />
 			<c:HyperlinkText Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
 			    DisplayText="bg3modfeedback@163.com"
 			    URL="mailto:bg3modfeedback@163.com" />
-			<TextBlock HorizontalAlignment="Right" Text="开源许可:" />
+			<TextBlock HorizontalAlignment="Right" Text="开源许可：" />
 			<c:HyperlinkText Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
 			    DisplayText="MIT 2019"
@@ -76,17 +76,17 @@
 			    Columns="1*,3*"
 			    RowCount="3"
 			    Rows="auto,auto,auto">
-				<TextBlock HorizontalAlignment="Right" Text="请作者喝杯咖啡:" />
+				<TextBlock HorizontalAlignment="Right" Text="赞助软件作者：" />
 				<c:HyperlinkText Margin="10,0,0,4"
 				    HorizontalAlignment="Left"
 				    URL="{x:Static app:DivinityApp.URL_DONATION}"
 				    UseUrlForDisplayText="True" />
-				<TextBlock HorizontalAlignment="Right" Text="提交 Bug / 建议:" />
+				<TextBlock HorizontalAlignment="Right" Text="提交 Bug / 建议：" />
 				<c:HyperlinkText Margin="10,0,0,4"
 				    HorizontalAlignment="Left"
 				    URL="{x:Static app:DivinityApp.URL_ISSUES}"
 				    UseUrlForDisplayText="True" />
-				<TextBlock HorizontalAlignment="Right" Text="更新日志:" />
+				<TextBlock HorizontalAlignment="Right" Text="更新日志：" />
 				<c:HyperlinkText Margin="10,0,0,4"
 				    HorizontalAlignment="Left"
 				    URL="{x:Static app:DivinityApp.URL_CHANGELOG}"

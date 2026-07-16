@@ -172,7 +172,7 @@ public static class NexusModsDataLoader
 			else
 			{
 				var rateLimits = _client.RateLimitsManagement.APILimits;
-				taskResult.FailureMessage = $"已超出 API 限额。每小时 ({rateLimits.HourlyRemaining}/{rateLimits.HourlyLimit}) 每日 ({rateLimits.DailyRemaining}/{rateLimits.DailyLimit})";
+				taskResult.FailureMessage = $"已超出 NexusMods API 请求限额。每小时剩余：{rateLimits.HourlyRemaining}/{rateLimits.HourlyLimit}；每日剩余：{rateLimits.DailyRemaining}/{rateLimits.DailyLimit}";
 			}
 			return taskResult;
 		}

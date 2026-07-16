@@ -143,7 +143,7 @@
 						<CheckBox x:Name="RemoveFromLoadOrderCheckbox"
 						    Margin="8"
 						    HorizontalAlignment="Center"
-						    Content="从启用顺序中移除"
+						    Content="从模组加载顺序中移除"
 						    ToolTip="删除模组文件时，同步将其从当前已启用的模组排序列表中移出。" />
 					</StackPanel>
 					<StackPanel Grid.Row="2" Orientation="Horizontal">

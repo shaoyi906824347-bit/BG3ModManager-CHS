@@ -460,7 +460,13 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			if (IsInitialized && !IsRefreshing)
 			{
 				CheckExtenderInstalledVersion(t);
-				if (updateMods) RxApp.MainThreadScheduler.Schedule(UpdateExtenderVersionForAllMods);
+				if (updateMods)
+				{
+					RxApp.MainThreadScheduler.Schedule(() =>
+					{
+						UpdateExtenderVersionForAllMods();
+					});
+				}
 			}
 		}
 	}
@@ -975,14 +981,14 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 					}
 					catch (Exception ex)
 					{
-						var msg = $"运行自定义启动命令 '{Settings.CustomLaunchAction}' (参数: '{Settings.CustomLaunchArgs}') 时出错:\n{ex}";
+						var msg = $"运行自定义启动命令“{Settings.CustomLaunchAction}”（参数：“{Settings.CustomLaunchArgs}”）时发生错误：\n{ex}";
 						DivinityApp.Log(msg);
 						var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, msg, "自定义启动出错", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
 					}
 				}
 				else
 				{
-					ShowAlert("“启动 - 自定义动作”未配置。请在首选项中设置它。", AlertType.Warning, 30);
+					ShowAlert("尚未设置自定义启动命令，请在偏好设置中进行配置。", AlertType.Warning, 30);
 				}
 			}
 
@@ -1030,7 +1036,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			{
 				if (b)
 				{
-					menuItem.Header = "显示模组显示名称";
+					menuItem.Header = "按模组名称显示";
 				}
 				else
 				{
@@ -1118,18 +1124,20 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				if (settings != null)
 				{
 					loaded = true;
-					Settings.SetFrom(settings);
+					Settings.SetFrom<DivinityModManagerSettings, ReactiveAttribute>(settings);
+					Settings.ExtenderSettings.SetFrom(settings.ExtenderSettings);
+					Settings.ExtenderUpdaterSettings.SetFrom(settings.ExtenderUpdaterSettings);
 				}
 			}
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"加载偏好设置文件 '{settingsFile}' 时发生错误: {ex}", AlertType.Danger);
+			ShowAlert($"加载偏好设置文件“{settingsFile}”时发生错误：{ex}", AlertType.Danger);
 		}
 
 		LoadAppConfig();
 
-		Settings.DefaultExtenderLogDirectory = Path.Combine(GetLarianStudiosAppDataFolder(), "Baldur's Gate 3", "Extender Logs");
+		Settings.DefaultExtenderLogDirectory = Path.Combine(GetLarianStudiosAppDataFolder(), "Baldur's Gate 3", "Script Extender Logs");
 
 		var nexusModsSupportEnabled = AppSettings.FeatureEnabled("NexusMods");
 
@@ -1255,7 +1263,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"保存首选项到文件 '{settingsFile}' 时出错: {ex}", AlertType.Danger);
+			ShowAlert($"将偏好设置保存到文件“{settingsFile}”时发生错误：{ex}", AlertType.Danger);
 		}
 		return false;
 	}
@@ -1624,7 +1632,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			if (Directory.Exists(modsDirectory))
 			{
 				DivinityApp.Log($"Loading mod projects from '{modsDirectory}'.");
-				await SetMainProgressTextAsync("正在加载编辑器项目模组...");
+				await SetMainProgressTextAsync("正在加载编辑器模组...");
 				cancelTokenSource = GetCancellationToken(30000);
 				projects = await RunTask(DivinityModDataLoader.LoadEditorProjectsAsync(modsDirectory, cancelTokenSource.Token), null);
 				cancelTokenSource = GetCancellationToken(int.MaxValue);
@@ -1679,9 +1687,9 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				{
 					var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
 					$"在 Data 文件夹中发现了重复的模组项目:\n\n{message}",
-					"重复的开发工具模组",
+					"发现重复的编辑器模组",
 					MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
-					ShowAlert("在 Data 文件夹中发现了重复的开发工具模组", AlertType.Danger, 60);
+					ShowAlert("在 Data 文件夹中发现了重复的编辑器模组", AlertType.Danger, 60);
 				});
 			}
 			var baseModsDict = baseMods.DistinctBy(x => x.UUID).ToDictionary(x => x.UUID, x => x);
@@ -2047,7 +2055,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			{
 				newOrder = new DivinityLoadOrder()
 				{
-					Name = $"新排序{nextOrders.Count}",
+					Name = $"新排序方案 {nextOrders.Count}",
 					Order = ActiveMods.Select(m => m.ToOrderEntry()).ToList()
 				};
 				newOrder.FilePath = Path.Combine(GetOrdersDirectory(), DivinityModDataLoader.MakeSafeFilename(Path.Combine(newOrder.Name + ".json"), '_'));
@@ -2354,7 +2362,10 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 		if(IsInitialized)
 		{
-			LoadSettings();
+			await Observable.Start(() =>
+			{
+				LoadSettings();
+			}, RxApp.MainThreadScheduler);
 		}
 
 		if (Directory.Exists(PathwayData.AppDataGameFolder))
@@ -2460,7 +2471,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 				if (!GameDirectoryFound)
 				{
-					ShowAlert("游戏 Data 文件夹路径无效。请在首选项窗口中配置并刷新", AlertType.Danger);
+					ShowAlert("游戏 Data 文件夹路径无效，请在偏好设置中重新选择，然后刷新模组列表。", AlertType.Danger);
 					Window.OpenPreferences(false, true);
 				}
 			}, RxApp.MainThreadScheduler);
@@ -2624,7 +2635,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			}
 			catch (Exception ex)
 			{
-				ShowAlert($"保存模组加载顺序到 '{outputPath}' 失败: {ex.Message}", AlertType.Danger);
+				ShowAlert($"将模组加载顺序保存到“{outputPath}”时发生错误：{ex.Message}", AlertType.Danger);
 				result = false;
 			}
 
@@ -2748,7 +2759,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 				if (!String.IsNullOrWhiteSpace(missingDependencies))
 				{
-					messages.Add($"缺少依赖项:\n{missingDependencies}");
+					messages.Add($"缺少前置（依赖）模组：\n{missingDependencies}");
 				}
 
 				var finalMessage = string.Join(Environment.NewLine, messages);
@@ -3639,7 +3650,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			{
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{
-					string msg = $"写入加载顺序压缩包 '{outputPath}' 时出错: {ex}";
+					string msg = $"写入模组加载顺序压缩包“{outputPath}”时发生错误：{ex}";
 					DivinityApp.Log(msg);
 					ShowAlert(msg, AlertType.Danger);
 				});
@@ -3651,7 +3662,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		{
 			RxApp.MainThreadScheduler.Schedule(() =>
 			{
-				ShowAlert("当前配置(Profile)或模组顺序(ModOrder)为空！导出模组顺序失败", AlertType.Danger);
+				ShowAlert("当前游戏配置文件或模组加载顺序为空，无法导出。", AlertType.Danger);
 			});
 		}
 
@@ -3739,7 +3750,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		}
 		else
 		{
-			ShowAlert("当前活动配置 (Profile) 或模组顺序为空！导出模组顺序失败", AlertType.Danger);
+			ShowAlert("当前游戏配置文件或模组加载顺序为空，无法导出。", AlertType.Danger);
 		}
 
 	}
@@ -3826,14 +3837,14 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				}
 				catch (Exception ex)
 				{
-					ShowAlert($"导出模组顺序列表至 '{dialog.FileName}' 时出错:\n{ex}", AlertType.Danger);
+					ShowAlert($"将模组加载顺序列表导出到“{dialog.FileName}”时发生错误：\n{ex}", AlertType.Danger);
 				}
 			}
 		}
 		else
 		{
 			DivinityApp.Log($"SelectedProfile({SelectedProfile}) SelectedModOrder({SelectedModOrder})");
-			ShowAlert("当前活动配置 (Profile) 或模组顺序为空！导出模组顺序失败", AlertType.Danger);
+			ShowAlert("当前游戏配置文件或模组加载顺序为空，无法导出。", AlertType.Danger);
 		}
 	}
 
@@ -4151,7 +4162,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 					{
 						var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
 						"BG3ModManager 当前正以管理员权限运行，这可能会导致一些问题（例如无法拖拽文件）。\n请在非管理员模式下重启 BG3ModManager。\n点击“取消”可在以后禁用此警告。",
-						"程序提权警告",
+						"管理员权限警告",
 						MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.OK, Window.MessageBoxStyle);
 						if(result == MessageBoxResult.Cancel)
 						{
@@ -5081,7 +5092,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				}
 				if (selectedMods.Any(x => x.IsEditorMod))
 				{
-					ShowAlert("编辑器开发模组 (Editor mods) 无法使用模组管理器删除", AlertType.Warning, 60);
+					ShowAlert("编辑器模组无法通过模组管理器删除，请到游戏 Data 文件夹中手动管理。", AlertType.Warning, 60);
 				}
 			}
 			else
@@ -5149,7 +5160,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			}
 			catch (Exception ex)
 			{
-				ShowAlert($"将顺序复制到剪贴板时出错: {ex}", AlertType.Danger, 15);
+				ShowAlert($"将模组加载顺序复制到剪贴板时发生错误：{ex}", AlertType.Danger, 15);
 			}
 		});
 
@@ -5428,13 +5439,13 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 					var modSettingsData = await DivinityModDataLoader.LoadModSettingsFileAsync(e.FullPath);
 					if (activeCount > 0 && modSettingsData.CountActive() <= 0)
 					{
-						ShowAlert("当前活动的加载顺序 (modsettings.lsx) 已在外部被重置", AlertType.Danger);
+						ShowAlert("当前生效的模组加载顺序（modsettings.lsx）已被其他程序重置。", AlertType.Danger);
 						RxApp.MainThreadScheduler.Schedule(() =>
 						{
 							//Window.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
 							Window.FlashTaskbar();
 							var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-							"活动的加载顺序 (modsettings.lsx) 已在外部被重置，这导致您的所有模组被停用。\n这可能是由于当前加载顺序中存在一个或多个无效模组。",
+							"当前生效的模组加载顺序（modsettings.lsx）已被其他程序重置，导致所有模组被停用。\n这通常表示当前排序中存在无效或不兼容的模组。",
 							"模组顺序已被重置",
 							MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
 						});

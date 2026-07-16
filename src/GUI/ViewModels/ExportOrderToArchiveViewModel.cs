@@ -11,11 +11,11 @@ namespace DivinityModManager.ViewModels;
 
 public enum ExportOrderFileType
 {
-	[SettingsEntry("默认 JSON", "模组管理器使用的默认 .json 加载顺序格式")]
+	[SettingsEntry("标准 JSON（推荐）", "模组管理器默认使用的 .json 加载顺序格式，适合备份和分享")]
 	DefaultJson,
-	[SettingsEntry("详细 JSON", "包含作者、说明、标签等更多信息的 .json 加载顺序格式")]
+	[SettingsEntry("详细 JSON", "除加载顺序外，还包含作者、说明、标签等模组信息")]
 	DetailedJson,
-	[SettingsEntry("制表符分隔表格", "包含每个模组详细信息的 .tsv 表格")]
+	[SettingsEntry("TSV 表格", "可用 Excel 等表格软件打开，包含每个模组的详细信息")]
 	TSV
 }
 

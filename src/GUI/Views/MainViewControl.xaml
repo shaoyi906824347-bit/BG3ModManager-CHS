@@ -100,12 +100,12 @@
 					<TextBlock HorizontalAlignment="Center"
 					    FontSize="16"
 					    FontWeight="Bold"
-					    Text="{Binding MainProgressTitle, FallbackValue='Archiving...'}" />
+					    Text="{Binding MainProgressTitle, FallbackValue='正在打包...'}" />
 					<DockPanel Grid.Row="1" Margin="8">
 						<TextBlock HorizontalAlignment="Center"
 						    VerticalAlignment="Center"
 						    DockPanel.Dock="Bottom"
-						    Text="{Binding MainProgressWorkText, FallbackValue='Archiving pak 4/10...'}"
+						    Text="{Binding MainProgressWorkText, FallbackValue='正在打包第 4/10 个 .pak 文件...'}"
 						    TextAlignment="Center" />
 						<ProgressBar MinHeight="15"
 						    VerticalAlignment="Center"
@@ -327,7 +327,10 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="配置文件" />
+							<TextBlock Margin="0,0,4,0"
+							    VerticalAlignment="Center"
+							    Text="游戏配置文件"
+							    ToolTip="选择要写入模组排序的博德之门 3 游戏配置文件。多数玩家只有 Public。" />
 							<ComboBox x:Name="ProfilesComboBox"
 							    Grid.Column="1"
 							    MinWidth="125"
@@ -350,7 +353,10 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="模组排序" />
+							<TextBlock Margin="0,0,4,0"
+							    VerticalAlignment="Center"
+							    Text="模组排序"
+							    ToolTip="当前正在编辑的模组加载顺序方案。可保存多套方案并随时切换；使用右侧按钮可保存、另存或新建方案。" />
 							<ComboBox x:Name="OrdersComboBox"
 							    Grid.Column="1"
 							    MinWidth="140"
@@ -361,7 +367,8 @@
 							    KeyDown="ComboBox_KeyDown_LoseFocus"
 							    Loaded="OrdersComboBox_Loaded"
 							    LostFocus="OrdersComboBox_LostFocus"
-							    Tag="{Binding}">
+							    Tag="{Binding}"
+							    ToolTip="选择要查看或编辑的模组加载顺序方案。">
 								<ComboBox.ItemContainerStyle>
 									<Style TargetType="ComboBoxItem">
 										<EventSetter Event="ComboBoxItem.PreviewMouseDown" Handler="OrderComboBox_OnUserClick" />
@@ -384,7 +391,7 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 							<StackPanel Orientation="Horizontal">
-								<Button x:Name="SaveButton" ToolTip="保存当前模组启用顺序">
+								<Button x:Name="SaveButton" ToolTip="保存当前模组加载顺序方案">
 									<Button.Resources>
 										<Style BasedOn="{StaticResource {x:Type controls:AutoGrayableImage}}" TargetType="{x:Type controls:AutoGrayableImage}">
 											<Style.Triggers>
@@ -399,10 +406,10 @@
 									</Button.Resources>
 									<controls:AutoGrayableImage />
 								</Button>
-								<Button x:Name="SaveAsButton" ToolTip="另存排序配置为...">
+								<Button x:Name="SaveAsButton" ToolTip="将当前模组加载顺序另存为新方案...">
 									<controls:AutoGrayableImage Source="{StaticResource SaveAsImage}" />
 								</Button>
-								<Button x:Name="AddNewOrderButton" ToolTip="新建模组排序配置">
+								<Button x:Name="AddNewOrderButton" ToolTip="新建空白模组加载顺序方案">
 									<controls:AutoGrayableImage Source="{StaticResource AddItemImage}" />
 								</Button>
 							</StackPanel>
@@ -410,7 +417,7 @@
 							<StackPanel Grid.Column="2" Orientation="Horizontal">
 								<StackPanel.Resources />
 								<TextBlock Text="导出" />
-								<Button x:Name="ExportToModSettingsButton" ToolTip="保存并应用模组顺序到游戏">
+								<Button x:Name="ExportToModSettingsButton" ToolTip="把当前模组加载顺序写入游戏配置；启动游戏前请点击此按钮">
 									<controls:AutoGrayableImage Source="{StaticResource ExportScriptImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
@@ -422,15 +429,15 @@
 										</ContextMenu>
 									</Button.ContextMenu>
 								</Button>
-								<Button x:Name="ExportOrderToArchiveButton" ToolTip="打包已启用的模组为压缩包 (.zip)">
+								<Button x:Name="ExportOrderToArchiveButton" ToolTip="把当前已启用的模组和排序信息打包为 .zip，便于备份或分享">
 									<controls:AutoGrayableImage Source="{StaticResource ZipFileImage}" />
 								</Button>
-								<Button x:Name="ExportOrderToArchiveAsButton" ToolTip="打包已启用的模组并另存为...">
+								<Button x:Name="ExportOrderToArchiveAsButton" ToolTip="选择保存位置，把当前已启用的模组和排序信息打包为 .zip">
 									<controls:AutoGrayableImage Source="{StaticResource ZipFileAsImage}" />
 								</Button>
 								<Rectangle />
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="游戏主线" />
+									<TextBlock Text="游戏本体模组" ToolTip="游戏自带的主线模块。普通用户通常无需修改。" />
 									<ComboBox x:Name="AdventureModComboBox"
 									    Grid.Column="1"
 									    MinWidth="100"
@@ -456,7 +463,7 @@
 								</Button>
 								<Rectangle />
 								<TextBlock Text="快捷目录" />
-								<Button x:Name="OpenModsFolderButton" ToolTip="打开模组存放文件夹 (Mods)">
+								<Button x:Name="OpenModsFolderButton" ToolTip="打开模组存放文件夹（Mods）">
 									<controls:AutoGrayableImage Source="{StaticResource OpenFolderImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
@@ -493,7 +500,7 @@
 								</ComboBox>
 								<Rectangle />
 								<TextBlock Text="支持与反馈" />
-								<Button x:Name="OpenDonationPageButton" ToolTip="请作者喝杯咖啡 (赞助 LaughingLeader)">
+								<Button x:Name="OpenDonationPageButton" ToolTip="打开赞助页面 (Ko-fi)&#x0a;https://ko-fi.com/laughingleader">
 									<controls:AutoGrayableImage Source="{StaticResource OpenDonationLinkImage}" />
 								</Button>
 								<Button x:Name="OpenRepoPageButton" ToolTip="打开官方 GitHub 项目主页">

@@ -53,7 +53,9 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<TextBlock Padding="4" Text="已启用模组" />
+				<TextBlock Padding="4"
+				    Text="已启用模组"
+				    ToolTip="会加载进游戏的模组，顺序从上到下依次生效。排在下方的模组通常会覆盖上方模组的同名内容。" />
 				<c:UnfocusableTextBox x:Name="ActiveModsFilterTextBox"
 					Grid.Column="1"
 					Width="200"
@@ -102,7 +104,7 @@
 					AutomationProperties.Name="已启用模组" />
 				<StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
 					<TextBlock Text="汉化：" FontSize="11" Opacity="0.8" VerticalAlignment="Center" />
-					<TextBlock Text="可爱女陔王语嫣 (小黑盒 ID: 29602586)" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+					<TextBlock Text="可爱女孩王语嫣 (小黑盒 ID: 29602586)" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
 					<TextBlock Text="  反馈邮箱：" FontSize="11" Margin="10,0,0,0" Opacity="0.8" VerticalAlignment="Center" />
 					<c:HyperlinkText DisplayText="bg3modfeedback@163.com" URL="mailto:bg3modfeedback@163.com" FontSize="11" VerticalAlignment="Center" />
 				</StackPanel>
@@ -135,11 +137,14 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<TextBlock HorizontalAlignment="Center" FontSize="16" Text="覆盖模组 (直接生效/无需排序)" />
+					<TextBlock HorizontalAlignment="Center"
+					    FontSize="16"
+					    Text="覆盖型模组（直接生效，无需排序）"
+					    ToolTip="这类模组放入 Mods 文件夹后会直接生效，不需要加入已启用模组列表。" />
 					<c:ModListView x:Name="ForceLoadedModsListView"
 						Grid.Row="1"
 						MaxHeight="99999"
-						behavior:ScreenReaderHelperBehavior.Name="Force-Loaded Mods"
+						behavior:ScreenReaderHelperBehavior.Name="直接生效的覆盖型模组"
 						HideHeader="True"
 						ItemContainerStyle="{StaticResource DivinityModDataListItem}"
 						LinkedHeaderListView="{Binding ElementName=ActiveModsListView}"
@@ -166,7 +171,9 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<TextBlock Padding="4" Text="未启用模组" />
+				<TextBlock Padding="4"
+				    Text="未启用模组"
+				    ToolTip="已安装但当前不会加载的模组。双击或按回车即可移到已启用列表。" />
 				<c:UnfocusableTextBox x:Name="InactiveModsFilterTextBox"
 					Grid.Column="1"
 					Width="200"

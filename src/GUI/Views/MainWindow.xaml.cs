@@ -259,10 +259,6 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 
 	public void OpenPreferences(bool switchToKeybindings = false, bool forceOpen = false)
 	{
-		if (SettingsWindow.ViewModel == null)
-		{
-			SettingsWindow.Init(ViewModel);
-		}
 		if (!SettingsWindow.IsVisible)
 		{
 			if (switchToKeybindings == true)
@@ -410,6 +406,7 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 			}
 		};
 		SettingsWindow.Hide();
+		SettingsWindow.Init(ViewModel);
 
 		UpdateWindow = new AppUpdateWindow();
 		UpdateWindow.ViewModel.AppTitle = ViewModel.AppTitle;

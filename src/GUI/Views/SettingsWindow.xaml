@@ -7,13 +7,13 @@
     xmlns:c="clr-namespace:DivinityModManager.Controls"
     xmlns:controls="clr-namespace:DivinityModManager.Controls"
     xmlns:conv="clr-namespace:DivinityModManager.Converters"
+    xmlns:core="clr-namespace:DivinityModManager;assembly=DivinityModManagerCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dapp="clr-namespace:DivinityModManager;assembly=DivinityModManagerCore"
     xmlns:data="clr-namespace:DivinityModManager.Models;assembly=DivinityModManagerCore"
     xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:ext="clr-namespace:DivinityModManager.Controls.Extensions"
     xmlns:extdata="clr-namespace:DivinityModManager.Models.Extender;assembly=DivinityModManagerCore"
-    xmlns:extenum="clr-namespace:DivinityModManager.Enums.Extender;assembly=DivinityModManagerCore"
     xmlns:local="clr-namespace:DivinityModManager.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mv="clr-namespace:DivinityModManager.Models.View"
@@ -44,13 +44,13 @@
 						    RowCount="4"
 						    RowHeight="*"
 						    Rows="auto,auto,auto,auto">
-							<TextBlock Text="编译日期:" />
+							<TextBlock Text="编译日期：" />
 							<TextBlock Text="{Binding BuildDateDisplayString}" />
-							<TextBlock Text="游戏版本:" />
+							<TextBlock Text="最低游戏版本：" />
 							<TextBlock Text="{Binding MinGameVersion}" />
-							<TextBlock Text="扩展器版本:" />
+							<TextBlock Text="脚本扩展器版本：" />
 							<TextBlock Text="{Binding Version}" />
-							<TextBlock Text="发布链接:" />
+							<TextBlock Text="下载地址：" />
 							<TextBlock Text="{Binding URL}" />
 						</controls:AutoGrid>
 					</DataTemplate>
@@ -126,7 +126,7 @@
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
 			<StackPanel Margin="0" HorizontalAlignment="Left" Orientation="Horizontal">
-				<Button x:Name="SaveSettingsButton" Style="{StaticResource IconButtonStyle}" ToolTip="保存设置 (CTRL + S)">
+				<Button x:Name="SaveSettingsButton" Style="{StaticResource IconButtonStyle}" ToolTip="保存设置（Ctrl + S）">
 					<controls:AutoGrayableImage Source="{StaticResource SaveImage}" />
 				</Button>
 				<Rectangle Margin="2,0" Style="{StaticResource VerticalSeparator}" />
@@ -148,7 +148,7 @@
 					<TextBlock x:Name="GeneralSettingsTabHeader"
 					    Style="{StaticResource TabItemWithContextMenu}"
 					    Text="常规"
-					    ToolTip="常规模组管理器设置 (保存于 Data/settings.json)" />
+					    ToolTip="常规模组管理器设置（保存于 Data/settings.json）" />
 				</TabItem.Header>
 				<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 					<controls:AutoGrid x:Name="SettingsAutoGrid" />
@@ -159,7 +159,7 @@
 					<TextBlock x:Name="ScriptExtenderTabHeader"
 					    Style="{StaticResource TabItemWithContextMenu}"
 					    Text="脚本扩展器"
-					    ToolTip="脚本扩展器高级选项配置 (保存于 ScriptExtenderSettings.json)" />
+					    ToolTip="脚本扩展器高级选项配置（保存于 ScriptExtenderSettings.json）" />
 				</TabItem.Header>
 				<Grid>
 					<Grid.RowDefinitions>
@@ -175,8 +175,8 @@
 				<TabItem.Header>
 					<TextBlock x:Name="UpdaterTabHeader"
 					    Style="{StaticResource TabItemWithContextMenu}"
-					    Text="扩展器更新"
-					    ToolTip="脚本扩展器更新配置 (保存于 ScriptExtenderUpdaterConfig.json)" />
+					    Text="脚本扩展器更新"
+					    ToolTip="脚本扩展器自动更新设置（保存于 ScriptExtenderUpdaterConfig.json）" />
 				</TabItem.Header>
 				<Grid>
 					<Grid.RowDefinitions>
@@ -191,7 +191,7 @@
 							    behavior:TextBlockSettingsEntryAttributeBehavior.TargetType="{x:Type extdata:ScriptExtenderUpdateConfig}"
 							    Text="更新通道" />
 							<ComboBox x:Name="UpdateChannelComboBox"
-							    ItemsSource="{ext:EnumExtension {x:Type extenum:ExtenderUpdateChannel}}"
+							    ItemsSource="{ext:EnumExtension {x:Type core:ExtenderUpdateChannel}}"
 							    SelectedValuePath="Value"
 							    ToolTip="{Binding ElementName=UpdateChannelTextBlock, Path=ToolTip}">
 								<ComboBox.ItemTemplate>
@@ -202,8 +202,8 @@
 							</ComboBox>
 							<TextBlock x:Name="SelectVersionTextBlock"
 							    Grid.Column="0"
-							    Text="选择目标版本"
-							    ToolTip="选择一个版本以自动设定目标版本和校验值。&#x0a;本列表是基于所选更新通道，从在线 manifest 数据中自动加载的。" />
+							    Text="选择要安装的版本"
+							    ToolTip="选择具体版本后，管理器会自动填写版本号和文件校验值。&#x0a;选择“最新版本”会自动跟随当前更新通道；列表来自在线更新清单（manifest）。" />
 							<ComboBox x:Name="UpdaterTargetVersionComboBox"
 							    Grid.Column="1"
 							    DisplayMemberPath="DisplayName"
@@ -217,7 +217,7 @@
 					<TextBlock x:Name="KeybindingsTabHeader"
 					    Style="{StaticResource TabItemWithContextMenu}"
 					    Text="快捷键绑定"
-					    ToolTip="模组管理器键盘快捷键配置 (保存于 Data/keybindings.json)" />
+					    ToolTip="模组管理器键盘快捷键配置（保存于 Data/keybindings.json）" />
 				</TabItem.Header>
 				<ListView x:Name="KeybindingsListView"
 				    KeyboardNavigation.TabNavigation="Continue"
@@ -278,7 +278,7 @@
 					<TextBlock x:Name="AdvancedSettingsTabHeader"
 					    Style="{StaticResource TabItemWithContextMenu}"
 					    Text="高级设置"
-					    ToolTip="模组管理器的高级调试/实验性设置 (保存于 Data/settings.json)" />
+					    ToolTip="模组管理器的调试、启动参数和维护工具。不了解用途时建议保持默认值（保存于 Data/settings.json）。" />
 				</TabItem.Header>
 				<controls:AutoGrid x:Name="AdvancedSettingsAutoGrid"
 				    Margin="10,0"
@@ -290,12 +290,12 @@
 				    Rows="auto,auto,auto,auto">
 					<TextBlock x:Name="DebugModeTextBlock" behavior:TextBlockSettingsEntryAttributeBehavior.Property="DebugModeEnabled" behavior:TextBlockSettingsEntryAttributeBehavior.TargetType="{x:Type data:DivinityModManagerSettings}" />
 					<CheckBox x:Name="DebugModeCheckBox" VerticalAlignment="Center" ToolTip="{Binding ElementName=DebugModeTextBlock, Path=ToolTip}" />
-					<TextBlock Text="保存管理器日志" ToolTip="自动保存调试日志至 _Logs 目录" />
+					<TextBlock Text="记录模组管理器调试日志" ToolTip="把管理器运行信息保存到 _Logs 文件夹，便于排查问题。平时无需开启。" />
 					<CheckBox x:Name="LogEnabledCheckBox" VerticalAlignment="Center" />
 					<Button x:Name="GameLaunchParamsMainButton"
 					    VerticalAlignment="Center"
-					    Content="启动参数"
-					    ToolTip="当通过模组管理器启动游戏时传递给游戏程序的附加命令行参数">
+					    Content="游戏启动参数"
+					    ToolTip="通过模组管理器启动游戏时，传递给游戏程序的附加命令。普通用户请留空。">
 						<Button.ContextMenu>
 							<ContextMenu x:Name="GameLaunchParamsMainMenu">
 								<ContextMenu.ItemTemplate>
@@ -324,7 +324,7 @@
 						<TextBox x:Name="GameLaunchParamsTextBox"
 						    VerticalAlignment="Center"
 						    TextWrapping="Wrap"
-						    ToolTip="当通过模组管理器启动游戏时传递给游戏程序的附加命令行参数" />
+						    ToolTip="通过模组管理器启动游戏时传递给游戏程序的附加命令。普通用户请留空。" />
 						<Button x:Name="ClearLaunchParamsMenuItem"
 						    Grid.Column="1"
 						    Style="{StaticResource IconButtonStyle}"
@@ -332,12 +332,12 @@
 							<controls:AutoGrayableImage Source="{StaticResource AlertBar_Close}" />
 						</Button>
 					</Grid>
-					<TextBlock Text="实验性功能" />
+					<TextBlock Text="维护工具" />
 					<Button x:Name="ClearCacheButton"
 					    HorizontalAlignment="Center"
 					    VerticalAlignment="Center"
-					    Content="删除缓存"
-					    ToolTip="彻底删除保存在管理器 Data 目录下的本地模组信息缓存，用以重置或刷新异常数据" />
+					    Content="清除模组信息缓存"
+					    ToolTip="删除管理器 Data 文件夹中的本地模组信息缓存。&#x0a;当模组信息显示异常时可尝试使用；不会删除 Mods 文件夹中的模组文件。" />
 				</controls:AutoGrid>
 			</TabItem>
 		</TabControl>

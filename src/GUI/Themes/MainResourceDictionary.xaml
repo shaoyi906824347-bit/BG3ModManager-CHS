@@ -330,7 +330,7 @@
 										<Setter Property="Text" Value="显示文件名" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding DisplayFileForName}" Value="true">
-												<Setter Property="Text" Value="显示模组显示名称" />
+											<Setter Property="Text" Value="按模组名称显示" />
 											</DataTrigger>
 										</Style.Triggers>
 									</Style>
@@ -415,7 +415,7 @@
 										<Setter Property="Text" Value="显示文件名" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding DisplayFileForName}" Value="true">
-												<Setter Property="Text" Value="显示模组显示名称" />
+											<Setter Property="Text" Value="按模组名称显示" />
 											</DataTrigger>
 										</Style.Triggers>
 									</Style>
@@ -596,7 +596,7 @@
 			</Grid>
 
 			<Separator Background="{DynamicResource {x:Static adonisUI:Brushes.Layer1HighlightBorderBrush}}" />
-			<TextBlock TextWrapping="Wrap" Visibility="{Binding AuthorVisibility}"><Run Text="作者: " /><Run FontWeight="Bold" Foreground="#3da2fa" Text="{Binding Author}" />
+			<TextBlock TextWrapping="Wrap" Visibility="{Binding AuthorVisibility}"><Run Text="作者：" /><Run FontWeight="Bold" Foreground="#3da2fa" Text="{Binding Author}" />
 				<TextBlock.Effect>
 					<DropShadowEffect BlurRadius="4"
 					    Direction="330"
@@ -615,14 +615,14 @@
 				<Separator Background="{DynamicResource {x:Static adonisUI:Brushes.Layer1HighlightBorderBrush}}" />
 			</StackPanel>
 			<StackPanel Margin="2" Orientation="Vertical" Visibility="{Binding DependencyVisibility, FallbackValue=Collapsed}">
-				<TextBlock FontWeight="Bold" Text="依赖项:" />
+				<TextBlock FontWeight="Bold" Text="前置（依赖）模组：" />
 				<ListBox Grid.IsSharedSizeScope="True"
 				    ItemTemplate="{StaticResource DependencyModTemplate}"
 				    ItemsSource="{Binding DisplayedDependencies}"
 				    Style="{StaticResource ModuleShortDescListBox}" />
 			</StackPanel>
 			<StackPanel Margin="2" Orientation="Vertical" Visibility="{Binding ConflictsVisibility, FallbackValue=Collapsed}">
-				<TextBlock FontWeight="Bold" Text="冲突项:" />
+				<TextBlock FontWeight="Bold" Text="冲突项：" />
 				<ListBox Grid.IsSharedSizeScope="True"
 				    ItemTemplate="{StaticResource ConflictModTemplate}"
 				    ItemsSource="{Binding DisplayedConflicts}"
@@ -844,9 +844,10 @@
 		<GridView.Columns>
 			<GridViewColumn Width="40"
 			    behavior:ScreenReaderHelperBehavior.HelpText="模组加载顺序索引列"
-			    behavior:ScreenReaderHelperBehavior.Name="索引"
-			    Header="#"
-			    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			    behavior:ScreenReaderHelperBehavior.Name="索引">
+				<GridViewColumn.Header>
+					<TextBlock Text="#" ToolTip="模组的加载序号，数字越大越靠后加载。" />
+				</GridViewColumn.Header>
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Margin="2,0,2,0" Background="Transparent" Text="{Binding Index}" />

@@ -97,7 +97,7 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 		catch(Exception ex)
 		{
 			DivinityApp.Log($"Error checking for update:\n{ex}");
-			if (_showAlert) MainWindow.Self.ViewModel.ShowAlert($"检查更新时发生错误: {ex.Message}", AlertType.Danger, 60);
+			if (_showAlert) MainWindow.Self.ViewModel.ShowAlert($"检查更新时发生错误：{ex.Message}", AlertType.Danger, 60);
 
 			if (ex is System.Net.WebException)
 			{

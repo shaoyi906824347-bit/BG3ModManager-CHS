@@ -69,14 +69,14 @@
 						Minimum="0" />
 				</StackPanel>
 				<StackPanel>
-					<TextBlock Text="修正号 (Revision)" />
+					<TextBlock Text="修订号（Revision）" ToolTip="用于小幅修订或补丁版本。" />
 					<xc:ULongUpDown
 						x:Name="RevisionUpDown"
 						Maximum="65536"
 						Minimum="0" />
 				</StackPanel>
 				<StackPanel>
-					<TextBlock Text="编译号 (Build)" />
+					<TextBlock Text="构建号（Build）" ToolTip="每次构建或发布时递增的编号。" />
 					<xc:ULongUpDown
 						x:Name="BuildUpDown"
 						Maximum="2147483647"
@@ -89,7 +89,7 @@
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				Orientation="Horizontal">
-				<TextBlock Text="生成的版本号整数: " />
+				<TextBlock Text="生成的版本号整数：" />
 				<controls:UnfocusableTextBox x:Name="VersionNumberTextBox" />
 			</StackPanel>
 			<StackPanel
