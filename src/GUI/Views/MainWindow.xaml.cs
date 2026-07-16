@@ -1,4 +1,4 @@
-﻿using AdonisUI;
+using AdonisUI;
 using AdonisUI.Controls;
 
 using AutoUpdaterDotNET;
@@ -99,7 +99,7 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 		ToggleLogging(true);
 		DivinityApp.Log(msg);
 		var result = Xceed.Wpf.Toolkit.MessageBox.Show(msg,
-			"Open the logs folder?",
+			"是否打开日志文件夹？",
 			System.Windows.MessageBoxButton.YesNo,
 			System.Windows.MessageBoxImage.Error,
 			System.Windows.MessageBoxResult.No, MessageBoxStyle);
@@ -129,11 +129,11 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 		e.Handled = true;
 		ToggleLogging(true);
 		var doShutdown = ViewModel?.IsInitialized != true;
-		var shutdownText = doShutdown ? " The program will close." : "";
+		var shutdownText = doShutdown ? " 程序即将关闭。" : "";
 		DivinityApp.Log($"An exception in the UI occurred.{shutdownText}\n{e.Exception}");
 
-		var result = Xceed.Wpf.Toolkit.MessageBox.Show($"An exception in the UI occurred.{shutdownText}\n{e.Exception}",
-			"Open the logs folder?",
+		var result = Xceed.Wpf.Toolkit.MessageBox.Show($"UI 发生异常。{shutdownText}\n{e.Exception}",
+			"是否打开日志文件夹？",
 			System.Windows.MessageBoxButton.YesNo,
 			System.Windows.MessageBoxImage.Error,
 			System.Windows.MessageBoxResult.No, MessageBoxStyle);
@@ -153,11 +153,11 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 	{
 		ToggleLogging(true);
 		var doShutdown = ViewModel?.IsInitialized != true;
-		var shutdownText = doShutdown ? " The program will close." : "";
+		var shutdownText = doShutdown ? " 程序即将关闭。" : "";
 
 		DivinityApp.Log($"An unhandled exception occurred.{shutdownText}\n{e.ExceptionObject}");
-		var result = Xceed.Wpf.Toolkit.MessageBox.Show($"An unhandled exception occurred.{shutdownText}\n{e.ExceptionObject}",
-			"Open the logs folder?",
+		var result = Xceed.Wpf.Toolkit.MessageBox.Show($"发生未处理的异常。{shutdownText}\n{e.ExceptionObject}",
+			"是否打开日志文件夹？",
 			System.Windows.MessageBoxButton.YesNo,
 			System.Windows.MessageBoxImage.Error,
 			System.Windows.MessageBoxResult.No, MessageBoxStyle);

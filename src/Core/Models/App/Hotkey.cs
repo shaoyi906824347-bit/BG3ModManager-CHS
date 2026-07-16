@@ -133,7 +133,7 @@ public class Hotkey : ReactiveObject, IHotkey
 			.ToProperty(this, nameof(ModifiedText), "", scheduler: RxApp.MainThreadScheduler);
 
 		_tooltip = this.WhenAnyValue(x => x.DisplayName, x => x.IsDefault)
-			.Select(x => x.Item2 ? $"{x.Item1} (Modified)" : x.Item1)
+			.Select(x => x.Item2 ? $"{x.Item1}（已修改）" : x.Item1)
 			.ToProperty(this, nameof(ToolTip), scheduler: RxApp.MainThreadScheduler);
 
 		var canReset = isDefaultObservable.Select(b => !b);

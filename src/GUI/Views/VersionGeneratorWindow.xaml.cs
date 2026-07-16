@@ -25,13 +25,13 @@ public class VersionGeneratorViewModel : ReactiveObject
 		CopyCommand = ReactiveCommand.Create(() =>
 		{
 			Clipboard.SetText(Version.VersionInt.ToString());
-			alert.SetSuccessAlert($"Copied {Version.VersionInt} to the clipboard.");
+			alert.SetSuccessAlert($"已将 {Version.VersionInt} 复制到剪贴板。");
 		});
 
 		ResetCommand = ReactiveCommand.Create(() =>
 		{
 			Version.VersionInt = 36028797018963968;
-			alert.SetWarningAlert($"Reset version number.");
+			alert.SetWarningAlert("版本号已重置。");
 		});
 
 		UpdateVersionFromTextCommand = ReactiveCommand.Create<KeyboardFocusChangedEventArgs, Unit>(e =>

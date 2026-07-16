@@ -3,10 +3,10 @@
 namespace DivinityModManager;
 public enum LaunchGameType
 {
-	[Display(Name = "Default (Exe)", Description = "Open the game exe directly,\nand create a steam_appid.txt in the bin folder if it doesn't exist,\nallowing you to bypassing the launcher")]
+	[Display(Name = "直接启动（Exe）", Description = "直接运行游戏主程序；如果 bin 文件夹中不存在 steam_appid.txt，则自动创建，以便跳过拉瑞安启动器")]
 	Exe,
-	[Display(Name = "Steam", Description = "Open the game by running the Steam launch protocol ('steam://run/1086940')")]
+	[Display(Name = "通过 Steam 启动", Description = "使用 Steam 启动协议（steam://run/1086940）运行游戏")]
 	Steam,
-	[Display(Name = "Custom", Description = "Open the game by opening a different file or protocol (ex. a batch file or protocol handler like playnite://playnite/start/id)")]
+	[Display(Name = "自定义", Description = "运行自定义文件或协议，例如批处理文件或 playnite://playnite/start/id 等协议处理程序")]
 	Custom
 }

@@ -1,4 +1,4 @@
-﻿using DivinityModManager.Controls;
+using DivinityModManager.Controls;
 
 using System.Windows.Documents;
 
@@ -14,7 +14,7 @@ public class HelpWindowViewModel : ReactiveObject
 
 	public HelpWindowViewModel()
 	{
-		WindowTitle = "Help";
+		WindowTitle = "快捷键帮助";
 		HelpTitle = "";
 		HelpText = "";
 	}

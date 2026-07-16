@@ -94,9 +94,9 @@ public class ModUpdatesViewData : ReactiveObject
 			Unlocked = false;
 			using ProgressDialog dialog = new ProgressDialog()
 			{
-				WindowTitle = "Updating Mods",
-				Text = "Copying mods...",
-				CancellationText = "Update Cancelled",
+				WindowTitle = "正在更新模组",
+				Text = "正在复制模组...",
+				CancellationText = "模组更新已取消",
 				MinimizeBox = false,
 				ProgressBarStyle = ProgressBarStyle.ProgressBar
 			};
@@ -129,8 +129,8 @@ public class ModUpdatesViewData : ReactiveObject
 					new TaskDialogButton(ButtonType.Yes),
 					new TaskDialogButton(ButtonType.No)
 				},
-			WindowTitle = "Update Mods?",
-			Content = "Override local mods with the selected updates?",
+			WindowTitle = "更新模组？",
+			Content = "是否使用选中的更新覆盖本地模组？",
 			MainIcon = TaskDialogIcon.Warning
 		};
 		var result = dialog.ShowDialog(MainWindow.Self);
@@ -153,7 +153,7 @@ public class ModUpdatesViewData : ReactiveObject
 		}
 		catch (Exception ex)
 		{
-			string message = $"Error copying mods: {ex}";
+			string message = $"复制模组时发生错误：{ex}";
 			DivinityApp.Log(message);
 			MainWindow.Self.AlertBar.SetDangerAlert(message);
 		}
@@ -174,14 +174,14 @@ public class ModUpdatesViewData : ReactiveObject
 				{
 					if (e.Cancel) return;
 					var fileName = Path.GetFileName(file);
-					dialog.ReportProgress(args.TotalMoved / totalWork, $"Copying '{fileName}'...", null);
+						dialog.ReportProgress(args.TotalMoved / totalWork, $"正在复制 '{fileName}'...", null);
 					try
 					{
 						File.Copy(file, Path.Combine(args.ModPakFolder, fileName), true);
 					}
 					catch (Exception ex)
 					{
-						string message = $"Error copying '{fileName}':\n{ex}";
+						string message = $"复制 '{fileName}' 时发生错误：\n{ex}";
 						DivinityApp.Log(message);
 						MainWindow.Self.AlertBar.SetDangerAlert(message);
 						dialog.ReportProgress(args.TotalMoved / totalWork, message, null);
@@ -208,7 +208,7 @@ public class ModUpdatesViewData : ReactiveObject
 					{
 						DivinityApp.Log($"Error copying mod:\n{ex}");
 					}
-					dialog.ReportProgress(args.TotalMoved / totalWork, $"Copying '{baseName}'...", null);
+					dialog.ReportProgress(args.TotalMoved / totalWork, $"正在复制 '{baseName}'...", null);
 					args.TotalMoved++;
 				}
 			}

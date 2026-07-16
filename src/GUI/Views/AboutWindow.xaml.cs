@@ -8,7 +8,7 @@ public class AboutWindowViewModel : ReactiveObject
 
 	public AboutWindowViewModel()
 	{
-		Title = "About";
+		Title = "关于软件";
 	}
 }
 

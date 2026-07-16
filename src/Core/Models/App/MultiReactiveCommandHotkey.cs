@@ -74,7 +74,7 @@ public class MultiReactiveCommandHotkey : ReactiveObject, IHotkey
 		if (Modifiers.HasFlag(ModifierKeys.Windows))
 			str.Append("Win + ");
 
-		str.Append(Key);
+		str.Append(Key.GetKeyName());
 
 		return str.ToString();
 	}

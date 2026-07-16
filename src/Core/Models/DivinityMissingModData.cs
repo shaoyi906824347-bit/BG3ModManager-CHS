@@ -26,11 +26,11 @@ public class DivinityMissingModData
 		}
 		if (!string.IsNullOrEmpty(Author))
 		{
-			text.Add(" by " + Author);
+			text.Add("，作者：" + Author);
 		}
 		if (RequiredBy.Count > 0)
 		{
-			text.Add(", Required By " + string.Join(';', RequiredBy.Order().Distinct()));
+			text.Add("，被以下模组依赖：" + string.Join('；', RequiredBy.Order().Distinct()));
 		}
 		return string.Join("", text);
 	}

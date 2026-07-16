@@ -47,7 +47,7 @@ public class ScriptExtenderUpdateVersion : ReactiveObject
 
 	private string ToDisplayName(ValueTuple<string, string, string> data)
 	{
-		if (String.IsNullOrEmpty(data.Item1)) return "Latest";
+		if (String.IsNullOrEmpty(data.Item1)) return "最新版本";
 		var result = data.Item1;
 		if (!String.IsNullOrEmpty(data.Item2))
 		{

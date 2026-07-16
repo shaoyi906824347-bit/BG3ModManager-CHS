@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
@@ -17,9 +17,20 @@
 		<Optimize>False</Optimize>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionDir)External\lslib\LSLibNative\LSLibNative.vcxproj" />
-		<ProjectReference Include="$(SolutionDir)External\lslib\LSLib\LSLib.csproj" />
-		<ProjectReference Include="$(SolutionDir)External\CrossSpeak\CrossSpeak\CrossSpeak.csproj" />
+		<Reference Include="LSLibNative">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\LSLibNative.dll</HintPath>
+		</Reference>
+		<Reference Include="LSLib">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\LSLib.dll</HintPath>
+		</Reference>
+		<!-- Use the bundled runtime assemblies directly. Building the CrossSpeak project in Publish configurations
+		     invokes a nuspec that hardcodes its Debug output and breaks otherwise valid release builds. -->
+		<Reference Include="CrossSpeak">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\CrossSpeak.dll</HintPath>
+		</Reference>
+		<Reference Include="TolkDotNet">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\TolkDotNet.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Gameloop.Vdf" Version="0.6.2" />

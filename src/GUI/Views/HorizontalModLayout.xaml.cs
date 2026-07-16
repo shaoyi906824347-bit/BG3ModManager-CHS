@@ -307,8 +307,7 @@ public partial class HorizontalModLayout : HorizontalModLayoutBase, IModViewLayo
 			var dropInfo = new ManualDropInfo(selectedMods, InactiveModsListView.SelectedIndex, InactiveModsListView, ViewModel.InactiveMods, ViewModel.ActiveMods);
 			InactiveModsListView.UnselectAll();
 			ViewModel.DropHandler.Drop(dropInfo);
-			string countSuffix = selectedMods.Count > 1 ? "mods" : "mod";
-			string text = $"Moved {selectedMods.Count} {countSuffix} to the inactive mods list.";
+			string text = $"已将 {selectedMods.Count} 个模组移至未启用列表。";
 			if (Services.ScreenReader.IsScreenReaderActive()) Services.ScreenReader.Speak(text);
 			ViewModel.ShowAlert(text, AlertType.Info, 10);
 			ViewModel.CanMoveSelectedMods = false;
@@ -360,8 +359,7 @@ public partial class HorizontalModLayout : HorizontalModLayoutBase, IModViewLayo
 			ActiveModsListView.UnselectAll();
 			ViewModel.DropHandler.Drop(dropInfo);
 
-			string countSuffix = selectedMods.Count > 1 ? "mods" : "mod";
-			string text = $"Moved {selectedMods.Count} {countSuffix} to the active mods list.";
+			string text = $"已将 {selectedMods.Count} 个模组移至已启用列表。";
 			if (Services.ScreenReader.IsScreenReaderActive()) Services.ScreenReader.Speak(text);
 			ViewModel.ShowAlert(text, AlertType.Info, 10);
 			ViewModel.CanMoveSelectedMods = false;
@@ -751,11 +749,16 @@ public partial class HorizontalModLayout : HorizontalModLayoutBase, IModViewLayo
 
 	public void Sort(string sortBy, ListSortDirection direction, object sender)
 	{
-		if (sortBy == "Version") sortBy = "Version.Version";
-		if (sortBy == "#") sortBy = "Index";
-		if (sortBy == "Name") sortBy = "DisplayName";
-		if (sortBy == "Modes") sortBy = "Targets";
-		if (sortBy == "Last Updated") sortBy = "LastUpdated";
+		sortBy = sortBy switch
+		{
+			"Version" or "版本" => "Version.Version",
+			"#" => "Index",
+			"Name" or "名称" => "DisplayName",
+			"Modes" or "模式" => "Targets",
+			"Author" or "作者" => "Author",
+			"Last Updated" or "最后更新" => "LastUpdated",
+			_ => sortBy
+		};
 
 		try
 		{

@@ -37,8 +37,10 @@ public class DivinityLoadOrder : ReactiveObject
 	[Reactive] public bool IsDecipheredOrder { get; set; }
 
 	private readonly ObservableAsPropertyHelper<string> _lastModified;
+	private readonly ObservableAsPropertyHelper<string> _displayName;
 
 	public string LastModified => _lastModified.Value;
+	public string DisplayName => _displayName.Value;
 
 	[DataMember]
 	public List<DivinityLoadOrderEntry> Order { get; set; } = new List<DivinityLoadOrderEntry>();
@@ -319,5 +321,8 @@ public class DivinityLoadOrder : ReactiveObject
 			_lastName = Name;
 		});
 		_lastModified = this.WhenAnyValue(x => x.LastModifiedDate).Select(x => x.ToString("g")).ToProperty(this, nameof(LastModified));
+		_displayName = this.WhenAnyValue(x => x.Name, x => x.IsModSettings)
+			.Select(x => x.Item2 ? "当前" : x.Item1)
+			.ToProperty(this, nameof(DisplayName));
 	}
 }

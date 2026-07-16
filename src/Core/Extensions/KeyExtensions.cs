@@ -6,6 +6,17 @@ public static class KeyExtensions
 {
 	private static readonly Dictionary<Key, string> KeyToName = new()
 	{
+		{Key.None, "无"},
+		{Key.Return, "回车"},
+		{Key.Tab, "Tab"},
+		{Key.Left, "左方向键"},
+		{Key.Right, "右方向键"},
+		{Key.Up, "上方向键"},
+		{Key.Down, "下方向键"},
+		{Key.PageUp, "上一页"},
+		{Key.PageDown, "下一页"},
+		{Key.Delete, "删除"},
+		{Key.Home, "Home"},
 		{Key.Add, "+"},
 		{Key.D0, "0"},
 		{Key.D1, "1"},

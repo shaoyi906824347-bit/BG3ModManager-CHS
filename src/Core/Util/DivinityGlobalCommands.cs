@@ -49,7 +49,7 @@ public class DivinityGlobalCommands : ReactiveObject
 		}
 		else
 		{
-			_viewModel.ShowAlert($"Error opening '{path}': File does not exist!", AlertType.Danger, 10);
+			_viewModel.ShowAlert($"无法打开 '{path}'：文件或文件夹不存在", AlertType.Danger, 10);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class DivinityGlobalCommands : ReactiveObject
 		}
 		else
 		{
-			_viewModel.ShowAlert($"Error opening '{path}': File does not exist!", AlertType.Danger, 10);
+			_viewModel.ShowAlert($"无法打开 '{path}'：文件或文件夹不存在", AlertType.Danger, 10);
 		}
 	}
 
@@ -74,11 +74,11 @@ public class DivinityGlobalCommands : ReactiveObject
 		try
 		{
 			Clipboard.SetText(text);
-			_viewModel.ShowAlert("Copied text to clipboard.", 0, 10);
+			_viewModel.ShowAlert("文本已复制到剪贴板。", 0, 10);
 		}
 		catch (Exception ex)
 		{
-			_viewModel.ShowAlert($"Error copying text to clipboard: {ex}", AlertType.Danger, 10);
+			_viewModel.ShowAlert($"复制文本到剪贴板时发生错误：{ex}", AlertType.Danger, 10);
 		}
 	}
 

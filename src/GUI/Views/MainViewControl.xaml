@@ -1,4 +1,4 @@
-﻿<local:MainViewControlViewBase x:Class="DivinityModManager.Views.MainViewControl"
+<local:MainViewControlViewBase x:Class="DivinityModManager.Views.MainViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
@@ -119,7 +119,7 @@
 					    HorizontalAlignment="Center"
 					    VerticalAlignment="Center"
 					    Command="{Binding CancelMainProgressCommand}"
-					    Content="Cancel"
+					    Content="取消"
 					    Visibility="{Binding CanCancelProgress, Converter={StaticResource BoolToVisibilityConverter}}" />
 				</Grid>
 			</xc:BusyIndicator.BusyContent>
@@ -143,13 +143,13 @@
 						<!--<ColumnDefinition Width="*" />-->
 					</Grid.ColumnDefinitions>
 					<Menu x:Name="TopMenuBar" Padding="2">
-						<MenuItem x:Name="FileMenuItem" Header="File" />
-						<MenuItem x:Name="EditMenuItem" Header="Edit" />
-						<MenuItem x:Name="SettingsMenuItem" Header="Settings" />
+						<MenuItem x:Name="FileMenuItem" Header="文件" />
+						<MenuItem x:Name="EditMenuItem" Header="编辑" />
+						<MenuItem x:Name="SettingsMenuItem" Header="设置" />
 						<!--<MenuItem x:Name="ViewMenuItem" Header="View" />-->
-						<MenuItem x:Name="GoMenuItem" Header="Go" />
-						<MenuItem x:Name="ToolsMenuItem" Header="Tools" Style="{StaticResource MenuItemHightlightBlink}" />
-						<MenuItem x:Name="HelpMenuItem" Header="Help" />
+						<MenuItem x:Name="GoMenuItem" Header="转到" />
+						<MenuItem x:Name="ToolsMenuItem" Header="工具" Style="{StaticResource MenuItemHightlightBlink}" />
+						<MenuItem x:Name="HelpMenuItem" Header="帮助" />
 					</Menu>
 					<StackPanel x:Name="UpdatesButtonPanel"
 					    Grid.Column="2"
@@ -176,7 +176,7 @@
 						    HorizontalAlignment="Stretch"
 						    VerticalAlignment="Stretch"
 						    BorderThickness="0"
-						    ToolTip="Toggle the Mod Updates View">
+							ToolTip="展开/折叠模组更新视图">
 							<Button.Style>
 								<Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
 									<Setter Property="Background" Value="Transparent" />
@@ -207,7 +207,7 @@
 									    HorizontalAlignment="Center"
 									    VerticalAlignment="Center"
 									    Foreground="{DynamicResource {x:Static adonisUI:Brushes.ForegroundBrush}}"
-									    Text="Updates:"
+									    Text="更新："
 									    TextAlignment="Center" />
 									<controls:BusyIndicator x:Name="UpdatesToggleButtonBusyIndicator"
 									    Grid.Column="1"
@@ -327,7 +327,7 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="Profile" />
+							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="配置文件" />
 							<ComboBox x:Name="ProfilesComboBox"
 							    Grid.Column="1"
 							    MinWidth="125"
@@ -339,8 +339,8 @@
 							    Tag="{Binding}">
 								<ComboBox.ContextMenu>
 									<ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-										<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.Folder}" Header="Open Profile Folder in File Explorer..." />
-										<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedProfile.Folder}" Header="Copy Profile Path to Clipboard" />
+										<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.Folder}" Header="在资源管理器中打开当前配置文件夹..." />
+										<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedProfile.Folder}" Header="复制当前配置路径到剪贴板" />
 									</ContextMenu>
 								</ComboBox.ContextMenu>
 							</ComboBox>
@@ -350,13 +350,13 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="Mod Order" />
+							<TextBlock Margin="0,0,4,0" VerticalAlignment="Center" Text="模组排序" />
 							<ComboBox x:Name="OrdersComboBox"
 							    Grid.Column="1"
 							    MinWidth="140"
 							    MinHeight="16"
 							    MaxWidth="250"
-							    DisplayMemberPath="Name"
+							    DisplayMemberPath="DisplayName"
 							    IsTextSearchEnabled="False"
 							    KeyDown="ComboBox_KeyDown_LoseFocus"
 							    Loaded="OrdersComboBox_Loaded"
@@ -369,10 +369,10 @@
 								</ComboBox.ItemContainerStyle>
 								<ComboBox.ContextMenu>
 									<ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-										<MenuItem Command="{Binding ToggleOrderRenamingCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=PlacementTarget}" Header="Rename" />
-										<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedModOrder.FilePath}" Header="Open in File Explorer..." />
-										<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedModOrder.FilePath}" Header="Copy Path to Clipboard" />
-										<MenuItem Command="{Binding DeleteOrderCommand}" CommandParameter="{Binding SelectedModOrder}" Header="Delete Order" />
+										<MenuItem Command="{Binding ToggleOrderRenamingCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=PlacementTarget}" Header="重命名" />
+										<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedModOrder.FilePath}" Header="在资源管理器中打开..." />
+										<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedModOrder.FilePath}" Header="复制路径到剪贴板" />
+										<MenuItem Command="{Binding DeleteOrderCommand}" CommandParameter="{Binding SelectedModOrder}" Header="删除排序配置" />
 									</ContextMenu>
 								</ComboBox.ContextMenu>
 							</ComboBox>
@@ -384,7 +384,7 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 							<StackPanel Orientation="Horizontal">
-								<Button x:Name="SaveButton" ToolTip="Save Load Order to File">
+								<Button x:Name="SaveButton" ToolTip="保存当前模组启用顺序">
 									<Button.Resources>
 										<Style BasedOn="{StaticResource {x:Type controls:AutoGrayableImage}}" TargetType="{x:Type controls:AutoGrayableImage}">
 											<Style.Triggers>
@@ -399,38 +399,38 @@
 									</Button.Resources>
 									<controls:AutoGrayableImage />
 								</Button>
-								<Button x:Name="SaveAsButton" ToolTip="Save Order As...">
+								<Button x:Name="SaveAsButton" ToolTip="另存排序配置为...">
 									<controls:AutoGrayableImage Source="{StaticResource SaveAsImage}" />
 								</Button>
-								<Button x:Name="AddNewOrderButton" ToolTip="Add New Load Order">
+								<Button x:Name="AddNewOrderButton" ToolTip="新建模组排序配置">
 									<controls:AutoGrayableImage Source="{StaticResource AddItemImage}" />
 								</Button>
 							</StackPanel>
 							<Rectangle Grid.Column="1" Margin="8,0,6,0" Style="{StaticResource VerticalSeparator}" />
 							<StackPanel Grid.Column="2" Orientation="Horizontal">
 								<StackPanel.Resources />
-								<TextBlock Text="Export" />
-								<Button x:Name="ExportToModSettingsButton" ToolTip="Export Order to Game">
+								<TextBlock Text="导出" />
+								<Button x:Name="ExportToModSettingsButton" ToolTip="保存并应用模组顺序到游戏">
 									<controls:AutoGrayableImage Source="{StaticResource ExportScriptImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
-											<MenuItem Command="{Binding Path=OpenFileCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="Open Exported Mod Order File..." />
-											<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="Open in File Explorer..." />
-											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="Copy Path to Clipboard" />
-											<MenuItem Command="{Binding CopyOrderToClipboardCommand}" Header="Copy Order to Clipboard" />
-											<MenuItem Command="{Binding ExportOrderAsListCommand}" Header="Export Order As List..." />
+											<MenuItem Command="{Binding Path=OpenFileCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="打开已导出的模组顺序文件 (modsettings.lsx)..." />
+											<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="在资源管理器中打开..." />
+											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding SelectedProfile.ModSettingsFile}" Header="复制路径到剪贴板" />
+											<MenuItem Command="{Binding CopyOrderToClipboardCommand}" Header="复制排序列表到剪贴板" />
+											<MenuItem Command="{Binding ExportOrderAsListCommand}" Header="导出排序为列表文本..." />
 										</ContextMenu>
 									</Button.ContextMenu>
 								</Button>
-								<Button x:Name="ExportOrderToArchiveButton" ToolTip="Export Active Mods to Zip">
+								<Button x:Name="ExportOrderToArchiveButton" ToolTip="打包已启用的模组为压缩包 (.zip)">
 									<controls:AutoGrayableImage Source="{StaticResource ZipFileImage}" />
 								</Button>
-								<Button x:Name="ExportOrderToArchiveAsButton" ToolTip="Export Active Mods to Zip As...">
+								<Button x:Name="ExportOrderToArchiveAsButton" ToolTip="打包已启用的模组并另存为...">
 									<controls:AutoGrayableImage Source="{StaticResource ZipFileAsImage}" />
 								</Button>
 								<Rectangle />
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="Campaign" />
+									<TextBlock Text="游戏主线" />
 									<ComboBox x:Name="AdventureModComboBox"
 									    Grid.Column="1"
 									    MinWidth="100"
@@ -443,55 +443,60 @@
 									    ToolTip="{StaticResource ModToolTip}">
 										<ComboBox.ContextMenu>
 											<ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-												<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="Open Adventure Mod in File Explorer..." />
-												<MenuItem Command="{Binding Path=CopyToClipboardCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="Copy Mod Path to Clipboard" />
+												<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="在资源管理器中打开主线模组..." />
+												<MenuItem Command="{Binding Path=CopyToClipboardCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="复制模组路径到剪贴板" />
 											</ContextMenu>
 										</ComboBox.ContextMenu>
 									</ComboBox>
 								</StackPanel>
 								<Rectangle />
-								<TextBlock Text="Refresh" />
-								<Button x:Name="RefreshButton" ToolTip="Refresh Mods">
+								<TextBlock Text="刷新" />
+								<Button x:Name="RefreshButton" ToolTip="重新加载所有模组">
 									<controls:AutoGrayableImage Source="{StaticResource RefreshImage}" />
 								</Button>
 								<Rectangle />
-								<TextBlock Text="Shortcuts" />
-								<Button x:Name="OpenModsFolderButton" ToolTip="Open Mods Folder">
+								<TextBlock Text="快捷目录" />
+								<Button x:Name="OpenModsFolderButton" ToolTip="打开模组存放文件夹 (Mods)">
 									<controls:AutoGrayableImage Source="{StaticResource OpenFolderImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
-											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding PathwayData.AppDataModsPath}" Header="Copy Path to Clipboard" />
+											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding PathwayData.AppDataModsPath}" Header="复制路径到剪贴板" />
 										</ContextMenu>
 									</Button.ContextMenu>
 								</Button>
-								<Button x:Name="OpenExtenderLogsFolderButton" ToolTip="Open Logs Folder">
+								<Button x:Name="OpenExtenderLogsFolderButton" ToolTip="打开脚本扩展器日志文件夹">
 									<controls:AutoGrayableImage Width="16" Height="16" Source="{StaticResource LogImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
-											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding Settings.ExtenderLogDirectory}" Header="Copy Path to Clipboard" />
+											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding Settings.ExtenderLogDirectory}" Header="复制路径到剪贴板" />
 										</ContextMenu>
 									</Button.ContextMenu>
 								</Button>
-								<Button x:Name="OpenGameButton" ToolTip="Launch Game">
+								<Button x:Name="OpenGameButton" ToolTip="启动游戏">
 									<controls:AutoGrayableImage Source="{StaticResource OpenGameImage}" />
 									<Button.ContextMenu>
 										<ContextMenu>
-											<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding Settings.GameExecutablePath}" Header="Open Game Folder..." />
-											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding Settings.GameExecutablePath}" Header="Copy Path to Clipboard" />
+											<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding Settings.GameExecutablePath}" Header="打开游戏文件夹..." />
+											<MenuItem Command="{Binding CopyPathToClipboardCommand}" CommandParameter="{Binding Settings.GameExecutablePath}" Header="复制路径到剪贴板" />
 										</ContextMenu>
 									</Button.ContextMenu>
 								</Button>
 								<ComboBox x:Name="GameLaunchActionComboBox"
-								    DisplayMemberPath="Description"
-								    ItemsSource="{Binding Source={ext:EnumExtension {x:Type dapp:DivinityGameLaunchWindowAction}}}"
+								    ItemsSource="{ext:EnumExtension {x:Type dapp:DivinityGameLaunchWindowAction}}"
 								    SelectedValuePath="Value"
-								    ToolTip="When the game launches through the mod manager, this action will be performed" />
+								    ToolTip="当通过模组管理器启动游戏时执行的操作">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Description}" />
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
 								<Rectangle />
-								<TextBlock Text="Support" />
-								<Button x:Name="OpenDonationPageButton" ToolTip="Donate a Coffee to the Developer (LaughingLeader)">
+								<TextBlock Text="支持与反馈" />
+								<Button x:Name="OpenDonationPageButton" ToolTip="请作者喝杯咖啡 (赞助 LaughingLeader)">
 									<controls:AutoGrayableImage Source="{StaticResource OpenDonationLinkImage}" />
 								</Button>
-								<Button x:Name="OpenRepoPageButton" ToolTip="Open Project Page (Github)">
+								<Button x:Name="OpenRepoPageButton" ToolTip="打开官方 GitHub 项目主页">
 									<controls:AutoGrayableImage Source="{StaticResource OpenRepoLinkImage}" />
 								</Button>
 							</StackPanel>

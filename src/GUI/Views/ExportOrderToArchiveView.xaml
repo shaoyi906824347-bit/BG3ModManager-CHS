@@ -1,4 +1,4 @@
-﻿<local:ExportOrderToArchiveViewViewBase x:Class="DivinityModManager.Views.ExportOrderToArchiveView"
+<local:ExportOrderToArchiveViewViewBase x:Class="DivinityModManager.Views.ExportOrderToArchiveView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:adonisUI="clr-namespace:AdonisUI;assembly=AdonisUI"
@@ -54,7 +54,7 @@
 				    Padding="20,4"
 				    HorizontalAlignment="Center"
 				    VerticalAlignment="Center"
-				    Content="Cancel" />
+				    Content="取消" />
 			</Grid>
 		</xc:BusyIndicator.BusyContent>
 		<Grid>
@@ -73,7 +73,7 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Background="{DynamicResource {x:Static adonisUI:Brushes.Layer3BackgroundBrush}}"
 				    FontSize="24"
-				    Text="Mods"
+				    Text="选择要打包的模组"
 				    TextAlignment="Center" />
 				<Rectangle Height="2" Fill="LightGray" />
 			</StackPanel>
@@ -93,7 +93,7 @@
 							</GridViewColumn>
 							<GridViewColumn Width="Auto">
 								<GridViewColumn.Header>
-									<TextBlock Text="Name" />
+									<TextBlock Text="模组名称" />
 								</GridViewColumn.Header>
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>
@@ -101,7 +101,7 @@
 									</DataTemplate>
 								</GridViewColumn.CellTemplate>
 							</GridViewColumn>
-							<GridViewColumn Width="Auto" Header="Path" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+							<GridViewColumn Width="Auto" Header="文件路径" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 								<GridViewColumn.CellTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding Mod.FilePath}" ToolTip="{Binding Mod.FilePath}" />
@@ -125,19 +125,19 @@
 						<CheckBox x:Name="IncludeOverridesCheckbox"
 						    Margin="8"
 						    HorizontalAlignment="Center"
-						    Content="Include Overrides"
-						    ToolTip="Add all override paks to the archive." />
+						    Content="包含覆盖型模组 (Overrides)"
+						    ToolTip="将所有未启用的覆盖型模组 (.pak) 也一并打包到压缩包中。" />
 						<ComboBox Name="OrderTypeComboBox" />
 					</StackPanel>
 					<StackPanel Grid.Row="2" Orientation="Horizontal">
 						<Button x:Name="ConfirmButton"
 						    Margin="4,0"
 						    Padding="12,2"
-						    Content="Delete" />
+						    Content="确认导出" />
 						<Button x:Name="CancelButton"
 						    Margin="4,0"
 						    Padding="12,2"
-						    Content="Cancel" />
+						    Content="取消" />
 					</StackPanel>
 				</Grid>
 			</Grid>

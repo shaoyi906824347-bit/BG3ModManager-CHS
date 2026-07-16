@@ -55,7 +55,7 @@ public class DeleteFilesViewData : BaseProgressViewModel
 	{
 		var targetFiles = Files.Where(x => x.IsSelected).ToList();
 
-		await UpdateProgress($"Confirming deletion...", "", 0d);
+		await UpdateProgress("正在确认删除...", "", 0d);
 
 		var result = await DivinityInteractions.ConfirmModDeletion.Handle(new DeleteFilesViewConfirmationData { Total = targetFiles.Count, PermanentlyDelete = PermanentlyDelete, Token = cts });
 		if (result)
@@ -67,7 +67,7 @@ public class DeleteFilesViewData : BaseProgressViewModel
 			};
 
 			await Observable.Start(() => IsProgressActive = true, RxApp.MainThreadScheduler);
-			await UpdateProgress($"Deleting {targetFiles.Count} mod file(s)...", "", 0d);
+			await UpdateProgress($"正在删除 {targetFiles.Count} 个模组文件...", "", 0d);
 			double progressInc = 1d / targetFiles.Count;
 			foreach (var f in targetFiles)
 			{
@@ -80,7 +80,7 @@ public class DeleteFilesViewData : BaseProgressViewModel
 					}
 					if (File.Exists(f.FilePath))
 					{
-						await UpdateProgress("", $"Deleting {f.FilePath}...");
+						await UpdateProgress("", $"正在删除 {f.FilePath}...");
 #if DEBUG
 						eventArgs.DeletedFiles.Add(f);
 #else
@@ -134,13 +134,13 @@ public class DeleteFilesViewData : BaseProgressViewModel
 		//this.WhenAnyValue(x => x.IsDeletingDuplicates, x => x.Files.Count).Select(x => IsClosingAllowed(x.Item1, x.Item2)).BindTo(this, x => x.CanClose);
 
 		_removeFromLoadOrderVisibility = this.WhenAnyValue(x => x.IsDeletingDuplicates).Select(x => x ? Visibility.Collapsed : Visibility.Visible).ToProperty(this, nameof(RemoveFromLoadOrderVisibility), true, RxApp.MainThreadScheduler);
-		_title = this.WhenAnyValue(x => x.IsDeletingDuplicates).Select(b => !b ? "Files to Delete" : "Duplicate Mods to Delete").ToProperty(this, nameof(Title), true, RxApp.MainThreadScheduler);
+		_title = this.WhenAnyValue(x => x.IsDeletingDuplicates).Select(b => !b ? "待删除的文件" : "待删除的重复模组").ToProperty(this, nameof(Title), true, RxApp.MainThreadScheduler);
 
 		var filesChanged = this.Files.ToObservableChangeSet().AutoRefresh(x => x.IsSelected).ToCollection().Throttle(TimeSpan.FromMilliseconds(50)).ObserveOn(RxApp.MainThreadScheduler);
 		_anySelected = filesChanged.Select(x => x.Any(y => y.IsSelected)).ToProperty(this, nameof(AnySelected));
 
 		_allSelected = filesChanged.Select(x => x.All(y => y.IsSelected)).ToProperty(this, nameof(AllSelected), true, RxApp.MainThreadScheduler);
-		_selectAllTooltip = this.WhenAnyValue(x => x.AllSelected).Select(b => $"{(b ? "Deselect" : "Select")} All").ToProperty(this, nameof(SelectAllTooltip), true, RxApp.MainThreadScheduler);
+		_selectAllTooltip = this.WhenAnyValue(x => x.AllSelected).Select(b => b ? "取消全选" : "全选").ToProperty(this, nameof(SelectAllTooltip), true, RxApp.MainThreadScheduler);
 
 		SelectAllCommand = ReactiveCommand.Create(ToggleSelectAll, this.RunCommand.IsExecuting.Select(b => !b), RxApp.MainThreadScheduler);
 

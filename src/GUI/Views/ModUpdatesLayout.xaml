@@ -1,4 +1,4 @@
-﻿<local:ModUpdatesLayoutBase x:Class="DivinityModManager.Views.ModUpdatesLayout"
+<local:ModUpdatesLayoutBase x:Class="DivinityModManager.Views.ModUpdatesLayout"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:adonisUI="clr-namespace:AdonisUI;assembly=AdonisUI"
@@ -44,7 +44,7 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Background="{DynamicResource {x:Static adonisUI:Brushes.Layer3BackgroundBrush}}"
 				    FontSize="24"
-				    Text="Mod Updates"
+				    Text="模组更新"
 				    TextAlignment="Center" />
 				<Rectangle Height="2" Fill="LightGray" />
 			</StackPanel>
@@ -54,7 +54,7 @@
 			    Rows="auto,*">
 				<TextBlock Background="{DynamicResource {x:Static adonisUI:Brushes.Layer4BackgroundBrush}}"
 				    FontSize="20"
-				    Text="New Mods"
+				    Text="新模组"
 				    TextAlignment="Center" />
 				<controls:ModListView x:Name="NewFilesModListView"
 				    BorderThickness="0"
@@ -75,26 +75,26 @@
 								</GridViewColumn>
 								<GridViewColumn Width="400"
 								    CellTemplate="{StaticResource ModNameTemplate}"
-								    Header="Name"
+								    Header="名称"
 								    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}" />
-								<GridViewColumn Width="100" Header="Author" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="100" Header="作者" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding Author}" ToolTip="{Binding Author}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="80" Header="Version" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="80" Header="版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
-											<TextBlock Text="{Binding DisplayVersion}" ToolTip="{Binding DisplayVersion}" />
+											<TextBlock Text="{Binding PrimaryModData.DisplayVersion}" ToolTip="{Binding PrimaryModData.DisplayVersion}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="Auto" Header="Type" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="Auto" Header="类型" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
-											<TextBlock Text="{Binding ModType}" ToolTip="{Binding ModType}" />
+											<TextBlock Text="{Binding PrimaryModData.DisplayModType}" ToolTip="{Binding PrimaryModData.DisplayModType}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
@@ -114,7 +114,7 @@
 			    Rows="auto,*">
 				<TextBlock Background="{DynamicResource {x:Static adonisUI:Brushes.Layer4BackgroundBrush}}"
 				    FontSize="20"
-				    Text="Updates"
+				    Text="可更新的模组"
 				    TextAlignment="Center" />
 				<controls:ModListView x:Name="UpdatesModListView"
 				    BorderThickness="0"
@@ -135,19 +135,19 @@
 								</GridViewColumn>
 								<GridViewColumn Width="400"
 								    CellTemplate="{StaticResource ModUpdateNameTemplate}"
-								    Header="Name"
+								    Header="名称"
 								    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}" />
-								<GridViewColumn Width="100" Header="Author" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="100" Header="作者" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding Author}" ToolTip="{Binding Author}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="80" Header="Current" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="80" Header="当前版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.HeaderContainerStyle>
 										<Style BasedOn="{StaticResource GridViewLeftContainerStyle}" TargetType="{x:Type GridViewColumnHeader}">
-											<Setter Property="Control.ToolTip" Value="Current Version" />
+											<Setter Property="Control.ToolTip" Value="当前安装的版本" />
 										</Style>
 									</GridViewColumn.HeaderContainerStyle>
 									<GridViewColumn.CellTemplate>
@@ -156,10 +156,10 @@
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="80" Header="New" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="80" Header="最新版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.HeaderContainerStyle>
 										<Style BasedOn="{StaticResource GridViewLeftContainerStyle}" TargetType="{x:Type GridViewColumnHeader}">
-											<Setter Property="Control.ToolTip" Value="Update Version" />
+											<Setter Property="Control.ToolTip" Value="可更新的最新版本" />
 										</Style>
 									</GridViewColumn.HeaderContainerStyle>
 									<GridViewColumn.CellTemplate>
@@ -168,22 +168,22 @@
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="100" Header="Update Date" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="100" Header="更新时间" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.HeaderContainerStyle>
 										<Style BasedOn="{StaticResource GridViewLeftContainerStyle}" TargetType="{x:Type GridViewColumnHeader}">
-											<Setter Property="Control.ToolTip" Value="Update Date" />
+											<Setter Property="Control.ToolTip" Value="该版本更新发布时间" />
 										</Style>
 									</GridViewColumn.HeaderContainerStyle>
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
-											<TextBlock Text="{Binding LastModified, StringFormat={x:Static dapp:DivinityApp.DateTimeColumnFormat}}" ToolTip="{Binding WorkshopMod.LastModified, StringFormat={x:Static dapp:DivinityApp.DateTimeTooltipFormat}}" />
+											<TextBlock Text="{Binding LastModified, StringFormat={x:Static dapp:DivinityApp.DateTimeColumnFormat}}" ToolTip="{Binding LastModified, StringFormat={x:Static dapp:DivinityApp.DateTimeTooltipFormat}}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Width="80" Header="Source" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+								<GridViewColumn Width="80" Header="来源" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 									<GridViewColumn.HeaderContainerStyle>
 										<Style BasedOn="{StaticResource GridViewLeftContainerStyle}" TargetType="{x:Type GridViewColumnHeader}">
-											<Setter Property="Control.ToolTip" Value="The Update Source" />
+											<Setter Property="Control.ToolTip" Value="模组更新的来源途径" />
 										</Style>
 									</GridViewColumn.HeaderContainerStyle>
 									<GridViewColumn.CellTemplate>
@@ -203,7 +203,7 @@
 			</controls:AutoGrid>
 			<Grid Grid.Row="4" Margin="4">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-					<Button x:Name="CopySelectedButton" Padding="8,2" Content="Copy Selected to Mods Folder" />
+					<Button x:Name="CopySelectedButton" Padding="8,2" Content="将选中的模组复制到 Mods 文件夹" />
 				</StackPanel>
 			</Grid>
 		</Grid>

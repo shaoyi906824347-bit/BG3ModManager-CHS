@@ -85,13 +85,28 @@ public partial class ModUpdatesLayout : ModUpdatesLayoutBase
 
 	private void Sort(string sortBy, ListSortDirection direction, object sender, bool modUpdatesGrid = false)
 	{
-		if (sortBy == "Version" || sortBy == "Current") sortBy = "Version.Version";
-		if (sortBy == "New") sortBy = "UpdatedMod.Version.Version";
 		if (sortBy == "#") sortBy = "Index";
-
-		if (modUpdatesGrid && sortBy != "IsSelected" && sortBy != "UpdatedMod.Version.Version")
+		if (sortBy != "IsSelected")
 		{
-			sortBy = "LocalMod." + sortBy;
+			sortBy = modUpdatesGrid
+				? sortBy switch
+				{
+					"Name" or "名称" => "LocalMod.DisplayName",
+					"Author" or "作者" => "Author",
+					"Current" or "当前版本" => "CurrentVersion",
+					"New" or "最新版本" => "UpdateVersion",
+					"Last Updated" or "更新时间" => "LastModified",
+					"Source" or "来源" => "SourceText",
+					_ => sortBy
+				}
+				: sortBy switch
+				{
+					"Name" or "名称" => "PrimaryModData.DisplayName",
+					"Author" or "作者" => "Author",
+					"Version" or "版本" => "UpdateVersion",
+					"Type" or "类型" => "PrimaryModData.DisplayModType",
+					_ => sortBy
+				};
 		}
 
 		if (sortBy != "")

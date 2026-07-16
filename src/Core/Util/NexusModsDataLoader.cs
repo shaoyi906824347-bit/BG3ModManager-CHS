@@ -167,12 +167,12 @@ public static class NexusModsDataLoader
 			taskResult.Success = false;
 			if (_client == null)
 			{
-				taskResult.FailureMessage = "API Client not initialized.";
+				taskResult.FailureMessage = "API 客户端尚未初始化。";
 			}
 			else
 			{
 				var rateLimits = _client.RateLimitsManagement.APILimits;
-				taskResult.FailureMessage = $"API limit exceeded. Hourly({rateLimits.HourlyRemaining}/{rateLimits.HourlyLimit}) Daily({rateLimits.DailyRemaining}/{rateLimits.DailyLimit})";
+				taskResult.FailureMessage = $"已超出 API 限额。每小时 ({rateLimits.HourlyRemaining}/{rateLimits.HourlyLimit}) 每日 ({rateLimits.DailyRemaining}/{rateLimits.DailyLimit})";
 			}
 			return taskResult;
 		}
@@ -187,7 +187,7 @@ public static class NexusModsDataLoader
 			if (total == 0)
 			{
 				taskResult.Success = false;
-				taskResult.FailureMessage = "Skipping. No mods to check (no NexusMods ID set in the loaded mods).";
+				taskResult.FailureMessage = "已跳过：没有可检查的模组（已加载的模组均未设置 NexusMods ID）。";
 				return taskResult;
 			}
 

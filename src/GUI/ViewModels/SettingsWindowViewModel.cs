@@ -1,4 +1,4 @@
-﻿using DivinityModManager.Enums.Extender;
+using DivinityModManager.Enums.Extender;
 using DivinityModManager.Extensions;
 using DivinityModManager.Models;
 using DivinityModManager.Models.App;
@@ -18,15 +18,15 @@ namespace DivinityModManager.ViewModels;
 
 public enum SettingsWindowTab
 {
-	[Description("Mod Manager Settings")]
+	[Description("模组管理器设置")]
 	Default = 0,
-	[Description("Script Extender Settings")]
+	[Description("脚本扩展器设置")]
 	Extender = 1,
-	[Description("Script Extender Updater Settings")]
+	[Description("脚本扩展器更新程序设置")]
 	ExtenderUpdater = 2,
-	[Description("Keybindings")]
+	[Description("快捷键")]
 	Keybindings = 3,
-	[Description("Advanced Settings")]
+	[Description("高级设置")]
 	Advanced = 4
 }
 
@@ -147,14 +147,16 @@ public class SettingsWindowViewModel : ReactiveObject
 	private string SelectedTabToResetTooltip(SettingsWindowTab tab)
 	{
 		var name = TabToName(tab);
-		return $"Reset {name}";
+		return $"重置{name}";
 	}
 
 	private string TabToName(SettingsWindowTab tab) => tab.GetDescription();
 
 	public async Task<Unit> GetExtenderUpdatesAsync(ExtenderUpdateChannel channel, CancellationToken token)
 	{
-		var url = String.Format(DivinityApp.EXTENDER_MANIFESTS_URL, channel.GetDescription());
+		// Manifest names are the enum identifiers (Release/Devel/Nightly), while
+		// GetDescription() is localized for display in the settings window.
+		var url = String.Format(DivinityApp.EXTENDER_MANIFESTS_URL, channel.ToString());
 		DivinityApp.Log($"Checking for script extender manifest info at '{url}'");
 		var text = await WebHelper.DownloadUrlAsStringAsync(url, token);
 		//#if DEBUG
@@ -259,12 +261,12 @@ public class SettingsWindowViewModel : ReactiveObject
 			_jsonConfigExportSettings.DefaultValueHandling = ExtenderSettings.ExportDefaultExtenderSettings ? DefaultValueHandling.Include : DefaultValueHandling.Ignore;
 			var contents = JsonConvert.SerializeObject(Settings.ExtenderSettings, _jsonConfigExportSettings);
 			File.WriteAllText(outputFile, contents);
-			ShowAlert($"Saved Script Extender settings to '{outputFile}'", AlertType.Success, 20);
+			ShowAlert($"已将脚本扩展器设置保存至 '{outputFile}'", AlertType.Success, 20);
 			return true;
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"Error saving Script Extender settings to '{outputFile}':\n{ex}", AlertType.Danger);
+			ShowAlert($"保存脚本扩展器设置至 '{outputFile}' 时发生错误：\n{ex}", AlertType.Danger);
 		}
 		return false;
 	}
@@ -278,7 +280,7 @@ public class SettingsWindowViewModel : ReactiveObject
 			_jsonConfigExportSettings.DefaultValueHandling = ExtenderSettings.ExportDefaultExtenderSettings ? DefaultValueHandling.Include : DefaultValueHandling.Ignore;
 			var contents = JsonConvert.SerializeObject(Settings.ExtenderUpdaterSettings, _jsonConfigExportSettings);
 			File.WriteAllText(outputFile, contents);
-			ShowAlert($"Saved Script Extender Updater settings to '{outputFile}'", AlertType.Success, 20);
+			ShowAlert($"已将脚本扩展器更新程序设置保存至 '{outputFile}'", AlertType.Success, 20);
 
 			Main.UpdateExtender(true);
 
@@ -286,7 +288,7 @@ public class SettingsWindowViewModel : ReactiveObject
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"Error saving Script Extender Updater settings to '{outputFile}':\n{ex}", AlertType.Danger);
+			ShowAlert($"保存脚本扩展器更新程序设置至 '{outputFile}' 时发生错误：\n{ex}", AlertType.Danger);
 		}
 		return false;
 	}
@@ -325,7 +327,7 @@ public class SettingsWindowViewModel : ReactiveObject
 			{
 				case SettingsWindowTab.Default:
 				case SettingsWindowTab.Advanced:
-					if (savedMainSettings && !IsAlertActive) ShowAlert("Saved settings.", AlertType.Success, 10);
+					if (savedMainSettings && !IsAlertActive) ShowAlert("设置已保存。", AlertType.Success, 10);
 					break;
 				case SettingsWindowTab.Extender:
 					ExportExtenderSettings();
@@ -367,10 +369,10 @@ public class SettingsWindowViewModel : ReactiveObject
 		ScriptExtenderUpdates = new ObservableCollectionExtended<ScriptExtenderUpdateVersion>() { _emptyVersion };
 		LaunchParams = new ObservableCollectionExtended<GameLaunchParamEntry>()
 		{
-			new("-continueGame", "Automatically load the last save when loading into the main menu"),
-			new("-storylog 1", "Enables the story log"),
-			new(@"--logPath """, "A directory to write story logs to"),
-			new("--cpuLimit x", "Limit the cpu to x amount of threads (unknown if this works)"),
+			new("-continueGame", "进入主菜单时自动载入最近的存档"),
+			new("-storylog 1", "启用剧情日志"),
+			new(@"--logPath """, "设置剧情日志的写入目录"),
+			new("--cpuLimit x", "将 CPU 使用限制为 x 个线程（不确定此参数是否有效）"),
 			new("-asserts 1", "", true),
 			new("-stats 1", "", true),
 			new("-dynamicStory 1", "", true),
@@ -438,7 +440,7 @@ public class SettingsWindowViewModel : ReactiveObject
 		ResetSettingsCommand = ReactiveCommand.Create(() =>
 		{
 			var tabName = TabToName(SelectedTabIndex);
-			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(View, $"Reset {tabName} to Default?\nCurrent settings will be lost.", $"Confirm {tabName} Reset",
+			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(View, $"确定要将“{tabName}”重置为默认值吗？\n当前的设置将会丢失。", $"确认重置“{tabName}”",
 				MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, Main.View.MainWindowMessageBox_OK.Style);
 			if (result == MessageBoxResult.Yes)
 			{
@@ -467,7 +469,7 @@ public class SettingsWindowViewModel : ReactiveObject
 
 		ClearCacheCommand = ReactiveCommand.Create(() =>
 		{
-			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(View, $"Delete local mod cache?\nThis cannot be undone.", "Confirm Delete Cache",
+			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(View, $"确定要删除本地模组缓存吗？\n此操作将无法撤销。", "确认删除缓存",
 				MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, Main.View.MainWindowMessageBox_OK.Style);
 			if (result == MessageBoxResult.Yes)
 			{
@@ -475,16 +477,16 @@ public class SettingsWindowViewModel : ReactiveObject
 				{
 					if (Main.UpdateHandler.DeleteCache())
 					{
-						ShowAlert($"Deleted local cache in {DivinityApp.GetAppDirectory("Data")}", AlertType.Success, 20);
+						ShowAlert($"已成功删除 {DivinityApp.GetAppDirectory("Data")} 中的本地缓存", AlertType.Success, 20);
 					}
 					else
 					{
-						ShowAlert($"No cache to delete.", AlertType.Warning, 20);
+						ShowAlert($"无可删除的缓存。", AlertType.Warning, 20);
 					}
 				}
 				catch (Exception ex)
 				{
-					ShowAlert($"Error deleting workshop cache:\n{ex}", AlertType.Danger);
+					ShowAlert($"删除创意工坊缓存时发生错误:\n{ex}", AlertType.Danger);
 				}
 			}
 		});
@@ -521,11 +523,11 @@ public class SettingsWindowViewModel : ReactiveObject
 			{
 				if(String.IsNullOrEmpty(x))
 				{
-					ShowAlert($"AppData path override cleared - Make sure to refresh", AlertType.Warning, 60);
+					ShowAlert("已清除 AppData 路径覆盖设置，请刷新模组列表。", AlertType.Warning, 60);
 				}
 				else
 				{
-					ShowAlert($"AppData path override changed to '{x}' - Make sure to refresh", AlertType.Warning, 60);
+					ShowAlert($"AppData 路径覆盖设置已改为 '{x}'，请刷新模组列表。", AlertType.Warning, 60);
 				}
 			}
 		});

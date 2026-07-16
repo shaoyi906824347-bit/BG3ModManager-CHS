@@ -7,10 +7,10 @@ namespace DivinityModManager.Enums.Extender;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum ExtenderUpdateChannel
 {
-	[Description("Release")]
+	[Description("正式版")]
 	Release,
-	[Description("Devel")]
+	[Description("开发版")]
 	Devel,
-	[Description("Nightly")]
+	[Description("每夜构建")]
 	Nightly
 }

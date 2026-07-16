@@ -51,28 +51,28 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 
 		if (requiredVersion > -1)
 		{
-			result += $"Requires Script Extender v{requiredVersion} or Higher";
+			result += $"需要脚本扩展器 v{requiredVersion} 或更高版本";
 		}
 		else
 		{
-			result += "Requires the Script Extender";
+			result += "需要脚本扩展器";
 		}
 
 		if (status.HasFlag(DivinityExtenderModStatus.DisabledFromConfig))
 		{
-			result += "\n(Enable Extensions in the Script Extender Settings)";
+			result += "\n（请在脚本扩展器设置中启用扩展功能）";
 		}
 		else if (status.HasFlag(DivinityExtenderModStatus.MissingAppData))
 		{
-			result += $"\n(Missing %LOCALAPPDATA%\\..\\{DivinityApp.EXTENDER_APPDATA_DLL})";
+			result += $"\n（缺少 %LOCALAPPDATA%\\..\\{DivinityApp.EXTENDER_APPDATA_DLL}）";
 		}
 		else if (status.HasFlag(DivinityExtenderModStatus.MissingUpdater))
 		{
-			result += $"\n(Missing {DivinityApp.EXTENDER_UPDATER_FILE})";
+			result += $"\n（缺少 {DivinityApp.EXTENDER_UPDATER_FILE}）";
 		}
 		else if (status.HasFlag(DivinityExtenderModStatus.MissingRequiredVersion))
 		{
-			result += "\n(The installed SE version is older)";
+			result += "\n（已安装的脚本扩展器版本过旧）";
 		}
 
 		if (result != "")
@@ -84,16 +84,16 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 		{
 			if(status.HasFlag(DivinityExtenderModStatus.MissingUpdater))
 			{
-				result += $"You are missing the Script Extender updater (DWrite.dll), which is required";
+				result += "缺少必需的脚本扩展器更新程序 (DWrite.dll)";
 			}
 			else
 			{
-				result += $"Currently installed version is v{currentVersion}";
+				result += $"当前已安装版本为 v{currentVersion}";
 			}
 		}
 		else
 		{
-			result += "No installed Script Extender version found\nIf you've already downloaded it, try opening the game once to complete the installation process";
+			result += "未找到已安装的脚本扩展器版本\n如果已经下载，请启动一次游戏以完成安装";
 		}
 		return result;
 	}
@@ -145,14 +145,14 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 			}
 			else
 			{
-				return Folder + " [Editor Project]";
+				return Folder + " [编辑器项目]";
 			}
 		}
 		else
 		{
-			if (!DivinityApp.DeveloperModeEnabled && UUID == DivinityApp.MAIN_CAMPAIGN_UUID)
+			if (UUID == DivinityApp.MAIN_CAMPAIGN_UUID || String.Equals(Name, "Main", StringComparison.OrdinalIgnoreCase))
 			{
-				return "Main";
+				return "主线";
 			}
 			return Name;
 		}
@@ -202,6 +202,7 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 	[ObservableAsProperty] public string OsirisStatusToolTipText { get; }
 	[ObservableAsProperty] public string LastModifiedDateText { get; }
 	[ObservableAsProperty] public string DisplayVersion { get; }
+	[ObservableAsProperty] public string DisplayModType { get; }
 
 	[ObservableAsProperty] public Visibility DependencyVisibility { get; }
 	[ObservableAsProperty] public Visibility ConflictsVisibility { get; }
@@ -328,9 +329,9 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 		switch (status)
 		{
 			case DivinityOsirisModStatus.SCRIPTS:
-				return "Has Osiris Scripting";
+				return "包含 Osiris 脚本";
 			case DivinityOsirisModStatus.MODFIXER:
-				return "Has Mod Fixer";
+				return "包含 Mod Fixer";
 			case DivinityOsirisModStatus.NONE:
 			default:
 				return "";
@@ -348,17 +349,17 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 
 		if (endorsements > 0)
 		{
-			lines.Add($"Endorsements: {endorsements}");
+			lines.Add($"推荐数：{endorsements}");
 		}
 
 		if (createdDate != DateTime.MinValue)
 		{
-			lines.Add($"Created on {createdDate.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}");
+			lines.Add($"创建日期：{createdDate.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}");
 		}
 
 		if (updatedDate != DateTime.MinValue)
 		{
-			lines.Add($"Last updated on {createdDate.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}");
+			lines.Add($"最后更新：{updatedDate.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}");
 		}
 
 		return String.Join("\n", lines);
@@ -375,7 +376,7 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 
 	private string BuildMissingDependencyToolTip()
 	{
-		return $"Missing Dependencies:\n{string.Join(Environment.NewLine, MissingDependencies.Items.Select(x => x.Name).Order())}";
+		return $"缺少依赖项：\n{string.Join(Environment.NewLine, MissingDependencies.Items.Select(x => x.Name).Order())}";
 	}
 
 	private static bool CanAllowInLoadOrderCheck(string modType, bool isLarianMod, bool isForceLoaded, bool isMergedMod, bool forceAllowInLoadOrder)
@@ -555,8 +556,18 @@ public class DivinityModData : DivinityBaseModData, ISelectable
 		OsirisModStatus = DivinityOsirisModStatus.NONE;
 
 		this.WhenAnyValue(x => x.LastUpdated).SkipWhile(x => !x.HasValue)
-			.Select(x => $"Last Modified on {x.Value.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}")
+			.Select(x => $"最后修改时间：{x.Value.ToString(DivinityApp.DateTimeColumnFormat, CultureInfo.InstalledUICulture)}")
 			.ToUIProperty(this, x => x.LastModifiedDateText, string.Empty);
+
+		this.WhenAnyValue(x => x.ModType)
+			.Select(x => x switch
+			{
+				"Adventure" => "冒险",
+				"File Override" => "文件覆盖",
+				"Add-on" => "附加模组",
+				_ => x
+			})
+			.ToUIProperty(this, x => x.DisplayModType, string.Empty);
 
 		this.WhenAnyValue(x => x.FilePath)
 			.Select(x => !String.IsNullOrEmpty(x) ? Visibility.Visible : Visibility.Collapsed)

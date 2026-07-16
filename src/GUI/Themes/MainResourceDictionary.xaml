@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic"
     xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
@@ -116,7 +116,7 @@
 		<MenuItem Command="ApplicationCommands.Copy" />
 		<MenuItem Command="ApplicationCommands.Cut" />
 		<MenuItem Command="ApplicationCommands.Paste" />
-		<MenuItem Command="{Binding Source={x:Static mm:AppCommands.Clear}}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Header="Clear" />
+		<MenuItem Command="{Binding Source={x:Static mm:AppCommands.Clear}}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Header="清空" />
 	</ContextMenu>
 	<Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type controls:UnfocusableTextBox}">
 		<Setter Property="ContextMenu" Value="{StaticResource TextBoxContextMenu}" />
@@ -270,14 +270,14 @@
 							<Setter Property="Height" Value="16" />
 						</Style>
 					</ContextMenu.Resources>
-					<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="Open in File Explorer...">
+					<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="在文件资源管理器中打开...">
 						<MenuItem.Icon>
 							<Image Source="{StaticResource OpenFolderImage}" />
 						</MenuItem.Icon>
 					</MenuItem>
 					<MenuItem Command="{Binding Path=OpenNexusModsPageCommand, Source={x:Static dapp:DivinityApp.Commands}}"
 					    CommandParameter="{Binding}"
-					    Header="Open NexusMods Page (Browser)..."
+					    Header="打开 NexusMods 页面 (浏览器)..."
 					    IsEnabled="{Binding CanOpenNexusModsLink}"
 					    Visibility="{Binding OpenNexusModsLinkVisibility}">
 						<MenuItem.Icon>
@@ -303,10 +303,10 @@
 							<TextBlock>
 								<TextBlock.Style>
 									<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-										<Setter Property="Text" Value="Allow in Load Order" />
+										<Setter Property="Text" Value="允许加入加载顺序" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding ForceAllowInLoadOrder}" Value="true">
-												<Setter Property="Text" Value="Remove from Load Order" />
+												<Setter Property="Text" Value="从加载顺序中移除" />
 											</DataTrigger>
 										</Style.Triggers>
 									</Style>
@@ -316,7 +316,7 @@
 					</MenuItem>
 					<MenuItem Command="{Binding Path=DeleteModCommand, Source={x:Static dapp:DivinityApp.Commands}}"
 					    CommandParameter="{Binding}"
-					    Header="Delete Mod..."
+					    Header="删除模组..."
 					    IsEnabled="{Binding CanDelete}">
 						<MenuItem.Icon>
 							<Image Source="{StaticResource DeleteModImage}" />
@@ -327,10 +327,10 @@
 							<TextBlock>
 								<TextBlock.Style>
 									<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-										<Setter Property="Text" Value="Show File Name" />
+										<Setter Property="Text" Value="显示文件名" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding DisplayFileForName}" Value="true">
-												<Setter Property="Text" Value="Show Mod Display Name" />
+												<Setter Property="Text" Value="显示模组显示名称" />
 											</DataTrigger>
 										</Style.Triggers>
 									</Style>
@@ -343,7 +343,7 @@
 					</MenuItem>
 					<MenuItem Command="{Binding Path=CopyToClipboardCommand, Source={x:Static dapp:DivinityApp.Commands}}"
 					    CommandParameter="{Binding UUID}"
-					    Header="Copy UUID to Clipboard"
+					    Header="复制 UUID 到剪贴板"
 					    Visibility="{Binding Path=(dapp:DivinityApp.DeveloperModeEnabled), Converter={StaticResource BoolToVisibilityConverter}}">
 						<MenuItem.Icon>
 							<Image Source="{StaticResource CopyToClipboardImage}" />
@@ -351,7 +351,7 @@
 					</MenuItem>
 					<MenuItem Command="{Binding Path=CopyToClipboardCommand, Source={x:Static dapp:DivinityApp.Commands}}"
 					    CommandParameter="{Binding Folder}"
-					    Header="Copy FolderName to Clipboard"
+					    Header="复制文件夹名称到剪贴板"
 					    Visibility="{Binding Path=(dapp:DivinityApp.DeveloperModeEnabled), Converter={StaticResource BoolToVisibilityConverter}}">
 						<MenuItem.Icon>
 							<Image Source="{StaticResource CopyToClipboardImage}" />
@@ -406,16 +406,16 @@
 		<Setter Property="ContextMenu">
 			<Setter.Value>
 				<ContextMenu DataContext="{Binding RelativeSource={RelativeSource Mode=Self}, Path=PlacementTarget.Tag}">
-					<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="Open in File Explorer..." />
+					<MenuItem Command="{Binding Path=OpenInFileExplorerCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding FilePath}" Header="在文件资源管理器中打开..." />
 					<MenuItem Command="{Binding Path=ToggleNameDisplayCommand, Source={x:Static dapp:DivinityApp.Commands}}" CommandParameter="{Binding}">
 						<MenuItem.Header>
 							<TextBlock>
 								<TextBlock.Style>
 									<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-										<Setter Property="Text" Value="Show File Name" />
+										<Setter Property="Text" Value="显示文件名" />
 										<Style.Triggers>
 											<DataTrigger Binding="{Binding DisplayFileForName}" Value="true">
-												<Setter Property="Text" Value="Show Mod Display Name" />
+												<Setter Property="Text" Value="显示模组显示名称" />
 											</DataTrigger>
 										</Style.Triggers>
 									</Style>
@@ -586,17 +586,17 @@
 				<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal">
 					<TextBlock HorizontalAlignment="Right"
 					    Foreground="Lime"
-					    Text="(Editor Project)"
+					    Text="(编辑器项目)"
 					    Visibility="{Binding IsEditorMod, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
 					<TextBlock HorizontalAlignment="Right"
 					    Foreground="Orange"
-					    Text="(Override)"
+					    Text="(覆盖模组)"
 					    Visibility="{Binding IsForceLoaded, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
 				</StackPanel>
 			</Grid>
 
 			<Separator Background="{DynamicResource {x:Static adonisUI:Brushes.Layer1HighlightBorderBrush}}" />
-			<TextBlock TextWrapping="Wrap" Visibility="{Binding AuthorVisibility}"><Run Text="Created by " /><Run FontWeight="Bold" Foreground="#3da2fa" Text="{Binding Author}" />
+			<TextBlock TextWrapping="Wrap" Visibility="{Binding AuthorVisibility}"><Run Text="作者: " /><Run FontWeight="Bold" Foreground="#3da2fa" Text="{Binding Author}" />
 				<TextBlock.Effect>
 					<DropShadowEffect BlurRadius="4"
 					    Direction="330"
@@ -615,14 +615,14 @@
 				<Separator Background="{DynamicResource {x:Static adonisUI:Brushes.Layer1HighlightBorderBrush}}" />
 			</StackPanel>
 			<StackPanel Margin="2" Orientation="Vertical" Visibility="{Binding DependencyVisibility, FallbackValue=Collapsed}">
-				<TextBlock FontWeight="Bold" Text="Dependencies:" />
+				<TextBlock FontWeight="Bold" Text="依赖项:" />
 				<ListBox Grid.IsSharedSizeScope="True"
 				    ItemTemplate="{StaticResource DependencyModTemplate}"
 				    ItemsSource="{Binding DisplayedDependencies}"
 				    Style="{StaticResource ModuleShortDescListBox}" />
 			</StackPanel>
 			<StackPanel Margin="2" Orientation="Vertical" Visibility="{Binding ConflictsVisibility, FallbackValue=Collapsed}">
-				<TextBlock FontWeight="Bold" Text="Conflicts:" />
+				<TextBlock FontWeight="Bold" Text="冲突项:" />
 				<ListBox Grid.IsSharedSizeScope="True"
 				    ItemTemplate="{StaticResource ConflictModTemplate}"
 				    ItemsSource="{Binding DisplayedConflicts}"
@@ -653,12 +653,12 @@
 			<StackPanel Margin="2" Orientation="Vertical" Visibility="{Binding IsForceLoaded, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
 				<Separator Background="{DynamicResource {x:Static adonisUI:Brushes.Layer1HighlightBorderBrush}}" />
 				<TextBlock Foreground="OrangeRed">
-					This mod overrides base game files directly.<LineBreak />
-					As long as this mod exists in the Mods folder,<LineBreak />
-					these files will be overwritten, even if the mod is disabled.</TextBlock>
-				<TextBlock Text="If this is intended, you can ignore this warning." />
-				<TextBlock Foreground="Lime" Text="This mod can be rearranged in the load order, due to it also having files of its own. Note that disabling it will not disable the file overrides." Visibility="{Binding IsForceLoadedMergedMod, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
-				<TextBlock Foreground="OrangeRed" Text="Overwritten builtin folders:" />
+					此模组直接覆盖了游戏的基础文件。<LineBreak />
+					只要该模组存在于 Mods 文件夹中，<LineBreak />
+					这些游戏基础文件就将被直接覆盖（即使在管理器中停用该模组也会生效）。</TextBlock>
+				<TextBlock Text="如果这是您的预期行为，您可以忽略此警告。" />
+				<TextBlock Foreground="Lime" Text="该模组可以重新安排加载顺序，因为它也包含独立的文件。注意，禁用它并不能停用被它直接覆盖的游戏文件。" Visibility="{Binding IsForceLoadedMergedMod, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
+				<TextBlock Foreground="OrangeRed" Text="被覆盖的原生文件夹：" />
 				<TextBlock Text="{Binding BuiltinOverrideModsText}" />
 			</StackPanel>
 			<Grid Margin="2" Visibility="{Binding HasInvalidUUIDVisibility}">
@@ -681,7 +681,7 @@
 				    FontFamily="Arial"
 				    FontWeight="Bold"
 				    Foreground="Red"
-				    Text="This mod has an invalid UUID, and will likely fail to load, resetting your load order." />
+				    Text="此模组的 UUID 无效，很可能会加载失败，并可能导致重置您的加载顺序。" />
 				<Image Grid.Column="2"
 				    Width="16"
 				    Height="16"
@@ -769,7 +769,7 @@
 					    RenderOptions.BitmapScalingMode="HighQuality"
 					    Source="{StaticResource XMLSchemaError}"
 					    Stretch="UniformToFill"
-					    ToolTip="This mod has an invalid UUID, and will likely fail to load"
+					    ToolTip="此模组的 UUID 无效，很可能会加载失败"
 					    Visibility="{Binding HasInvalidUUIDVisibility, FallbackValue=Collapsed}" />
 					<Image Width="16"
 					    Height="16"
@@ -781,7 +781,7 @@
 					    RenderOptions.BitmapScalingMode="HighQuality"
 					    Source="{StaticResource ToolkitModProjectIcon}"
 					    Stretch="UniformToFill"
-					    ToolTip="Toolkit Mod Project"
+					    ToolTip="模组开发工具项目"
 					    Visibility="{Binding ToolkitIconVisibility, FallbackValue=Collapsed}" />
 					<Image Width="16"
 					    Height="16"
@@ -843,8 +843,8 @@
 	    ColumnHeaderContainerStyle="{StaticResource GridViewLeftContainerStyle}">
 		<GridView.Columns>
 			<GridViewColumn Width="40"
-			    behavior:ScreenReaderHelperBehavior.HelpText="The mod order index column"
-			    behavior:ScreenReaderHelperBehavior.Name="Index"
+			    behavior:ScreenReaderHelperBehavior.HelpText="模组加载顺序索引列"
+			    behavior:ScreenReaderHelperBehavior.Name="索引"
 			    Header="#"
 			    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
@@ -855,24 +855,24 @@
 			</GridViewColumn>
 			<GridViewColumn Width="400" CellTemplate="{StaticResource ModNameTemplate}">
 				<GridViewColumn.Header>
-					<TextBlock Text="Name" />
+					<TextBlock Text="名称" />
 				</GridViewColumn.Header>
 			</GridViewColumn>
-			<GridViewColumn Width="80" Header="Version" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="80" Header="版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding DisplayVersion}" TextAlignment="Left" ToolTip="{Binding DisplayVersion}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="100" Header="Author" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="100" Header="作者" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Author}" ToolTip="{Binding Author}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="Auto" Header="Last Updated" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="Auto" Header="最后更新" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeColumnFormat}}" ToolTip="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeTooltipFormat}}" />
@@ -892,8 +892,8 @@
 	    ColumnHeaderContainerStyle="{StaticResource GridViewHiddenLeftContainerStyle}">
 		<GridView.Columns>
 			<GridViewColumn Width="40"
-			    behavior:ScreenReaderHelperBehavior.HelpText="The mod order index column"
-			    behavior:ScreenReaderHelperBehavior.Name="Index"
+			    behavior:ScreenReaderHelperBehavior.HelpText="模组加载顺序索引列"
+			    behavior:ScreenReaderHelperBehavior.Name="索引"
 			    Header="#"
 			    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
@@ -904,24 +904,24 @@
 			</GridViewColumn>
 			<GridViewColumn Width="400" CellTemplate="{StaticResource ModNameTemplate}">
 				<GridViewColumn.Header>
-					<TextBlock Text="Name" />
+					<TextBlock Text="名称" />
 				</GridViewColumn.Header>
 			</GridViewColumn>
-			<GridViewColumn Width="80" Header="Version" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="80" Header="版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding DisplayVersion}" TextAlignment="Left" ToolTip="{Binding DisplayVersion}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="100" Header="Author" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="100" Header="作者" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Author}" ToolTip="{Binding Author}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="Auto" Header="Last Updated" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="Auto" Header="最后更新" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeColumnFormat}}" ToolTip="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeTooltipFormat}}" />
@@ -937,23 +937,23 @@
 		<GridView.Columns>
 			<GridViewColumn Width="400"
 			    CellTemplate="{StaticResource ModNameTemplate}"
-			    Header="Name"
+			    Header="名称"
 			    HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}" />
-			<GridViewColumn Width="80" Header="Version" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="80" Header="版本" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding DisplayVersion}" TextAlignment="Left" ToolTip="{Binding DisplayVersion}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="100" Header="Author" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="100" Header="作者" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Author}" ToolTip="{Binding Author}" />
 					</DataTemplate>
 				</GridViewColumn.CellTemplate>
 			</GridViewColumn>
-			<GridViewColumn Width="Auto" Header="Last Updated" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
+			<GridViewColumn Width="Auto" Header="最后更新" HeaderTemplate="{StaticResource GridViewTextblockHeaderTemplate}">
 				<GridViewColumn.CellTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeColumnFormat}}" ToolTip="{Binding LastUpdated, StringFormat={x:Static dapp:DivinityApp.DateTimeTooltipFormat}}" />
@@ -1197,17 +1197,17 @@
 									    Padding="6,0,6,0"
 									    Command="{Binding Path=CopyToClipboardCommand, Source={x:Static dapp:DivinityApp.Commands}}"
 									    CommandParameter="{Binding ElementName=MessageText, Path=Text}"
-									    Content="Copy to Clipboard"
+									    Content="复制到剪贴板"
 									    Style="{TemplateBinding OkButtonStyle}"
-									    ToolTip="Copy to Clipboard" />
+									    ToolTip="复制提示信息到剪贴板" />
 									<Button Grid.Column="1"
 									    MinWidth="65"
 									    Margin="6,0,0,0"
 									    Padding="6,0,6,0"
 									    Command="{Binding Path=ClearMissingModsCommand, Source={x:Static dapp:DivinityApp.Commands}}"
-									    Content="Remove All Missing"
+									    Content="移除所有缺失模组"
 									    Style="{TemplateBinding OkButtonStyle}"
-									    ToolTip="Remove all missing mods from the load order." />
+									    ToolTip="从当前加载顺序中移除所有目前缺失的模组。" />
 								</Grid>
 								<Grid Grid.Column="1" HorizontalAlignment="Right">
 									<Grid.ColumnDefinitions>

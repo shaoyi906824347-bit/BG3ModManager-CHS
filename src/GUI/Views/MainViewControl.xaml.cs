@@ -182,12 +182,12 @@ public partial class MainViewControl : MainViewControlViewBase
 							if (File.Exists(nextFilePath))
 							{
 								var result = Xceed.Wpf.Toolkit.MessageBox.Show(main,
-									$"Overwrite '{nextFilePath}'?",
-									"Confirm Order Renaming (Overwriting File)",
+									$"文件 '{nextFilePath}' 已存在，是否覆盖？",
+									"确认重命名并覆盖加载顺序文件",
 									MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.OK, main.MessageBoxStyle);
 								if (result == MessageBoxResult.No)
 								{
-									AlertBar.SetInformationAlert($"Cancelled order renaming", 10);
+									AlertBar.SetInformationAlert("已取消重命名加载顺序。", 10);
 									return;
 								}
 							}
@@ -199,15 +199,15 @@ public partial class MainViewControl : MainViewControlViewBase
 							}
 							order.Name = nextName;
 							order.FilePath = nextFilePath;
-							AlertBar.SetSuccessAlert($"Renamed load order name/path to '{nextFilePath}'", 20);
+							AlertBar.SetSuccessAlert($"已将加载顺序重命名为 '{nextFilePath}'", 20);
 						}
 						catch (Exception ex)
 						{
-							AlertBar.SetDangerAlert($"Failed to rename file '{lastFilePath}' to '{nextFilePath}'", 20);
+							AlertBar.SetDangerAlert($"无法将文件 '{lastFilePath}' 重命名为 '{nextFilePath}'", 20);
 							MainWindowMessageBox_OK.WindowBackground = MessageBoxErrorBackgroundBrush;
 							MainWindowMessageBox_OK.Closed += ViewModel.MainWindowMessageBox_Closed_ResetColor;
-							MainWindowMessageBox_OK.ShowMessageBox($"Failed to rename file '{lastFilePath}' to '{nextFilePath}':\n{ex}",
-								"Failed to Rename Order", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+							MainWindowMessageBox_OK.ShowMessageBox($"无法将文件 '{lastFilePath}' 重命名为 '{nextFilePath}'：\n{ex}",
+								"重命名加载顺序失败", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 						}
 					}
 				}

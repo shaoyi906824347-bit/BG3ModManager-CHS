@@ -11,11 +11,11 @@ namespace DivinityModManager.ViewModels;
 
 public enum ExportOrderFileType
 {
-	[SettingsEntry("Default JSON", "The default .json load order that the mod manager uses")]
+	[SettingsEntry("默认 JSON", "模组管理器使用的默认 .json 加载顺序格式")]
 	DefaultJson,
-	[SettingsEntry("Detailed JSON", "An order .json that contains more information, such as the author, description, tags, and more")]
+	[SettingsEntry("详细 JSON", "包含作者、说明、标签等更多信息的 .json 加载顺序格式")]
 	DetailedJson,
-	[SettingsEntry("Tab-Separated Spreadsheet", "A .tsv spreadsheet contained detailed information about each mod")]
+	[SettingsEntry("制表符分隔表格", "包含每个模组详细信息的 .tsv 表格")]
 	TSV
 }
 
@@ -97,7 +97,7 @@ public class ExportOrderToArchiveViewModel : BaseProgressViewModel
 		_anySelected = filesChanged.Select(x => x.Any(y => y.IsSelected)).ToProperty(this, nameof(AnySelected));
 
 		_allSelected = filesChanged.Select(x => x.All(y => y.IsSelected)).ToProperty(this, nameof(AllSelected), true, RxApp.MainThreadScheduler);
-		_selectAllTooltip = this.WhenAnyValue(x => x.AllSelected).Select(b => $"{(b ? "Deselect" : "Select")} All").ToProperty(this, nameof(SelectAllTooltip), true, RxApp.MainThreadScheduler);
+		_selectAllTooltip = this.WhenAnyValue(x => x.AllSelected).Select(b => b ? "取消全选" : "全选").ToProperty(this, nameof(SelectAllTooltip), true, RxApp.MainThreadScheduler);
 
 		SelectAllCommand = ReactiveCommand.Create(ToggleSelectAll, this.RunCommand.IsExecuting.Select(b => !b), RxApp.MainThreadScheduler);
 

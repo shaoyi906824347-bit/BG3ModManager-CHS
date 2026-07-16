@@ -615,7 +615,7 @@ public static partial class DivinityModDataLoader
 				FilePath = pakPath,
 				Name = Path.GetFileNameWithoutExtension(pakPath),
 				Folder = builtinModOverrides.FirstOrDefault().Key,
-				Description = "This file overrides base game data.",
+				Description = "此文件会覆盖游戏基础数据。",
 				ModType = "File Override",
 				UUID = pakPath,
 			};

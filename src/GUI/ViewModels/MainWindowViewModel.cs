@@ -332,7 +332,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		if (!isLoggingEnabled) Window.ToggleLogging(true);
 
 		double taskStepAmount = 1.0 / 3;
-		MainProgressTitle = $"Setting up the Script Extender...";
+		MainProgressTitle = "正在设置脚本扩展器...";
 		MainProgressValue = 0d;
 		MainProgressToken = new CancellationTokenSource();
 		CanCancelProgress = true;
@@ -347,12 +347,12 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			Stream unzippedEntryStream = null;
 			try
 			{
-				await SetMainProgressTextAsync($"Downloading {PathwayData.ScriptExtenderLatestReleaseUrl}...");
+				await SetMainProgressTextAsync($"正在下载 {PathwayData.ScriptExtenderLatestReleaseUrl}...");
 				webStream = await WebHelper.DownloadFileAsStreamAsync(PathwayData.ScriptExtenderLatestReleaseUrl, MainProgressToken.Token);
 				if (webStream != null)
 				{
 					successes += 1;
-					await IncreaseMainProgressValueAsync(taskStepAmount, $"Extracting zip to {exeDir}...");
+					await IncreaseMainProgressValueAsync(taskStepAmount, $"正在将压缩包解压到 {exeDir}...");
 					ZipArchive archive = new ZipArchive(webStream);
 					foreach (ZipArchiveEntry entry in archive.Entries)
 					{
@@ -375,7 +375,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			}
 			finally
 			{
-				await SetMainProgressTextAsync("Cleaning up...");
+				await SetMainProgressTextAsync("正在清理临时文件...");
 				webStream?.Close();
 				unzippedEntryStream?.Close();
 				successes += 1;
@@ -387,14 +387,14 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				OnMainProgressComplete();
 				if (successes >= 3)
 				{
-					ShowAlert($"Successfully installed the Extender updater {DivinityApp.EXTENDER_UPDATER_FILE} to '{exeDir}'", AlertType.Success, 20);
+					ShowAlert($"已将脚本扩展器更新程序 {DivinityApp.EXTENDER_UPDATER_FILE} 安装至 '{exeDir}'", AlertType.Success, 20);
 					HighlightExtenderDownload = false;
 					Settings.ExtenderUpdaterSettings.UpdaterIsAvailable = true;
 					_justDownloadedScriptExtender = true;
 				}
 				else
 				{
-					ShowAlert($"Error occurred when installing the Extender updater {DivinityApp.EXTENDER_UPDATER_FILE} - Check the log", AlertType.Danger, 30);
+					ShowAlert($"安装脚本扩展器更新程序 {DivinityApp.EXTENDER_UPDATER_FILE} 时发生错误，请查看日志", AlertType.Danger, 30);
 				}
 			}, RxApp.MainThreadScheduler);
 
@@ -474,17 +474,17 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			if (!String.IsNullOrWhiteSpace(Settings.GameExecutablePath) && File.Exists(Settings.GameExecutablePath))
 			{
 				string exeDir = Path.GetDirectoryName(Settings.GameExecutablePath);
-				string messageText = String.Format(@"Download and install the Script Extender?
-The Script Extender is used by mods to extend the scripting language of the game, allowing new functionality.
-The extender needs to only be installed once, as it automatically updates when you launch the game.
-Download url: 
+				string messageText = String.Format(@"是否下载并安装脚本扩展器？
+脚本扩展器可扩展游戏脚本语言，为模组提供更多功能。
+脚本扩展器只需安装一次，之后会在启动游戏时自动更新。
+下载地址：
 {0}
-Directory the zip will be extracted to:
+压缩包解压目录：
 {1}", PathwayData.ScriptExtenderLatestReleaseUrl, exeDir);
 
 				var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
 				messageText,
-				"Download & Install the Script Extender?",
+				"下载并安装脚本扩展器？",
 				MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No, Window.MessageBoxStyle);
 
 				if (result == MessageBoxResult.Yes)
@@ -494,7 +494,7 @@ Directory the zip will be extracted to:
 			}
 			else
 			{
-				ShowAlert("The 'Game Executable Path' is not set or is not valid", AlertType.Danger);
+				ShowAlert("游戏主程序路径尚未设置或无效", AlertType.Danger);
 			}
 		}
 		else
@@ -626,8 +626,8 @@ Directory the zip will be extracted to:
 			{
 				_justDownloadedScriptExtender = false;
 				Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-				"The Script Extender has been successfully downloaded.\n\nPlease start the game once to complete the installation process.",
-				"Script Extender Installation",
+				"脚本扩展器已成功下载。\n\n请启动一次游戏以完成安装。",
+				"安装脚本扩展器",
 				MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, Window.MessageBoxStyle);
 			});
 		}
@@ -773,7 +773,7 @@ Directory the zip will be extracted to:
 
 		if (!ProcessHelper.TryOpenPath(exePath, File.Exists, launchParams, workingDirectory))
 		{
-			ShowAlert($"Failed to start game exe '{exePath}' - Check the 'Game Executable Path' in the preferences", AlertType.Danger);
+			ShowAlert($"无法启动游戏主程序 '{exePath}'，请检查偏好设置中的游戏主程序路径", AlertType.Danger);
 		}
 
 		if (!isLoggingEnabled) Window.ToggleLogging(false);
@@ -791,11 +791,11 @@ Directory the zip will be extracted to:
 
 			if(Settings.SettingsWindowIsOpen && Services.Get<SettingsWindowViewModel>() is SettingsWindowViewModel settingsWindowViewModel)
 			{
-				settingsWindowViewModel.ShowAlert($"Skip Launcher - Created '{steamAppidPath}'", AlertType.Success, 10);
+				settingsWindowViewModel.ShowAlert($"跳过启动器：已创建 '{steamAppidPath}'", AlertType.Success, 10);
 			}
 			else
 			{
-				ShowAlert($"Skip Launcher - Created '{steamAppidPath}'", AlertType.Success, 10);
+				ShowAlert($"跳过启动器：已创建 '{steamAppidPath}'", AlertType.Success, 10);
 			}
 		}
 	}
@@ -812,11 +812,11 @@ Directory the zip will be extracted to:
 
 				if (Settings.SettingsWindowIsOpen && Services.Get<SettingsWindowViewModel>() is SettingsWindowViewModel settingsWindowViewModel)
 				{
-					settingsWindowViewModel.ShowAlert($"Skip Launcher - Deleted '{steamAppidPath}'", AlertType.Danger, 10);
+					settingsWindowViewModel.ShowAlert($"跳过启动器：已删除 '{steamAppidPath}'", AlertType.Warning, 10);
 				}
 				else
 				{
-					ShowAlert($"Skip Launcher - Deleted '{steamAppidPath}'", AlertType.Danger, 10);
+					ShowAlert($"跳过启动器：已删除 '{steamAppidPath}'", AlertType.Warning, 10);
 				}
 			}
 			catch (Exception ex)
@@ -944,11 +944,11 @@ Directory the zip will be extracted to:
 				{
 					if (string.IsNullOrWhiteSpace(exePath))
 					{
-						ShowAlert("No game executable path set", AlertType.Danger, 30);
+						ShowAlert("尚未设置游戏主程序路径", AlertType.Danger, 30);
 					}
 					else
 					{
-						ShowAlert($"Failed to find game exe at, \"{exePath}\"", AlertType.Danger, 90);
+						ShowAlert($"在以下路径找不到游戏主程序：\"{exePath}\"", AlertType.Danger, 90);
 					}
 					return;
 				}
@@ -975,14 +975,14 @@ Directory the zip will be extracted to:
 					}
 					catch (Exception ex)
 					{
-						var msg = $"Error running custom launch '{Settings.CustomLaunchAction}' with args '{Settings.CustomLaunchArgs}':\n{ex}";
+						var msg = $"运行自定义启动命令 '{Settings.CustomLaunchAction}' (参数: '{Settings.CustomLaunchArgs}') 时出错:\n{ex}";
 						DivinityApp.Log(msg);
-						var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, msg, "Custom Launch Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
+						var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, msg, "自定义启动出错", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
 					}
 				}
 				else
 				{
-					ShowAlert("The 'Launch - Custom Action' is empty. Set it in the preferences.", AlertType.Warning, 30);
+					ShowAlert("“启动 - 自定义动作”未配置。请在首选项中设置它。", AlertType.Warning, 30);
 				}
 			}
 
@@ -1030,11 +1030,11 @@ Directory the zip will be extracted to:
 			{
 				if (b)
 				{
-					menuItem.Header = "Show Display Names for Mods";
+					menuItem.Header = "显示模组显示名称";
 				}
 				else
 				{
-					menuItem.Header = "Show File Names for Mods";
+					menuItem.Header = "显示模组真实文件名";
 				}
 			}
 		});
@@ -1124,7 +1124,7 @@ Directory the zip will be extracted to:
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"Error loading settings at '{settingsFile}': {ex}", AlertType.Danger);
+			ShowAlert($"加载偏好设置文件 '{settingsFile}' 时发生错误: {ex}", AlertType.Danger);
 		}
 
 		LoadAppConfig();
@@ -1255,7 +1255,7 @@ Directory the zip will be extracted to:
 		}
 		catch (Exception ex)
 		{
-			ShowAlert($"Error saving settings at '{settingsFile}': {ex}", AlertType.Danger);
+			ShowAlert($"保存首选项到文件 '{settingsFile}' 时出错: {ex}", AlertType.Danger);
 		}
 		return false;
 	}
@@ -1368,7 +1368,7 @@ Directory the zip will be extracted to:
 			}
 			else
 			{
-				ShowAlert("Failed to find %LOCALAPPDATA% folder - This is weird", AlertType.Danger);
+				ShowAlert("未能找到本地应用数据 (%LOCALAPPDATA%) 文件夹。这有些反常！", AlertType.Danger);
 				DivinityApp.Log($"Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify) return a non-existent path?\nResult({Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify)})");
 			}
 
@@ -1441,7 +1441,7 @@ Directory the zip will be extracted to:
 				var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog()
 				{
 					Multiselect = false,
-					Description = "Set the path to the Baldur's Gate 3 root installation folder",
+					Description = "请选择《博德之门 3》的游戏根目录",
 					UseDescriptionForTitle = true,
 					SelectedPath = GetInitialStartingDirectory()
 				};
@@ -1460,7 +1460,7 @@ Directory the zip will be extracted to:
 					}
 					else
 					{
-						ShowAlert("Failed to find Data folder with given installation directory", AlertType.Danger);
+						ShowAlert("在指定的安装目录中未能找到 Data 文件夹", AlertType.Danger);
 					}
 					if (File.Exists(exePath))
 					{
@@ -1613,7 +1613,7 @@ Directory the zip will be extracted to:
 		if (GameDirectoryFound)
 		{
 			DivinityApp.Log($"Loading base game mods from data folder...");
-			await SetMainProgressTextAsync("Loading base game mods from data folder...");
+			await SetMainProgressTextAsync("正在从 Data 文件夹加载游戏基础模组...");
 			DivinityApp.Log($"GameDataPath is '{Settings.GameDataPath}'.");
 			cancelTokenSource = GetCancellationToken(30000);
 			baseMods = await RunTask(DivinityModDataLoader.LoadBuiltinModsAsync(Settings.GameDataPath, cancelTokenSource.Token), null);
@@ -1624,7 +1624,7 @@ Directory the zip will be extracted to:
 			if (Directory.Exists(modsDirectory))
 			{
 				DivinityApp.Log($"Loading mod projects from '{modsDirectory}'.");
-				await SetMainProgressTextAsync("Loading editor project mods...");
+				await SetMainProgressTextAsync("正在加载编辑器项目模组...");
 				cancelTokenSource = GetCancellationToken(30000);
 				projects = await RunTask(DivinityModDataLoader.LoadEditorProjectsAsync(modsDirectory, cancelTokenSource.Token), null);
 				cancelTokenSource = GetCancellationToken(int.MaxValue);
@@ -1652,7 +1652,7 @@ Directory the zip will be extracted to:
 		if (Directory.Exists(PathwayData.AppDataModsPath))
 		{
 			DivinityApp.Log($"Loading mods from '{PathwayData.AppDataModsPath}'.");
-			await SetMainProgressTextAsync("Loading mods from Local AppData folder...");
+			await SetMainProgressTextAsync("正在从本地 AppData 文件夹加载模组...");
 			cancelTokenSource.CancelAfter(TimeSpan.FromMinutes(10));
 			modLoadingResults = await RunTask(DivinityModDataLoader.LoadModPackageDataAsync(PathwayData.AppDataModsPath, cancelTokenSource.Token), null);
 			cancelTokenSource = GetCancellationToken(int.MaxValue);
@@ -1678,10 +1678,10 @@ Directory the zip will be extracted to:
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{
 					var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-					$"Duplicate toolkit projects were found in the Data folder:\n\n{message}",
-					"Duplicate Toolkit Projects",
+					$"在 Data 文件夹中发现了重复的模组项目:\n\n{message}",
+					"重复的开发工具模组",
 					MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
-					ShowAlert($"Found duplicate toolkit mods in the Data folder", AlertType.Danger, 60);
+					ShowAlert("在 Data 文件夹中发现了重复的开发工具模组", AlertType.Danger, 60);
 				});
 			}
 			var baseModsDict = baseMods.DistinctBy(x => x.UUID).ToDictionary(x => x.UUID, x => x);
@@ -1697,7 +1697,7 @@ Directory the zip will be extracted to:
 			{
 				await Observable.Start(() =>
 				{
-					ShowAlert($"{dupeCount} duplicate mod(s) found", AlertType.Danger, 30);
+					ShowAlert($"发现了 {dupeCount} 个重复的模组文件", AlertType.Danger, 30);
 					DeleteMods(modLoadingResults.Duplicates, true, modLoadingResults.Mods);
 				}, RxApp.MainThreadScheduler);
 			}
@@ -1851,7 +1851,7 @@ Directory the zip will be extracted to:
 			catch (IOException ex)
 			{
 				DivinityApp.Log($"File may be in use by another process:\n{ex}");
-				ShowAlert($"Failed to copy file '{Path.GetFileName(filePath)} - It may be locked by another process'", AlertType.Danger);
+				ShowAlert($"复制文件 '{Path.GetFileName(filePath)}' 失败 - 它可能正被另一个进程占用", AlertType.Danger);
 			}
 			catch (Exception ex)
 			{
@@ -1873,7 +1873,7 @@ Directory the zip will be extracted to:
 	{
 		if (!MainProgressIsActive)
 		{
-			MainProgressTitle = "Importing mods.";
+			MainProgressTitle = "正在导入模组...";
 			MainProgressWorkText = "";
 			MainProgressValue = 0d;
 			MainProgressIsActive = true;
@@ -1920,17 +1920,17 @@ Directory the zip will be extracted to:
 					{
 						if (result.Mods.Count > 1)
 						{
-							ShowAlert($"Successfully imported {total} mods", AlertType.Success, 20);
+							ShowAlert($"成功导入了 {total} 个模组", AlertType.Success, 20);
 						}
 						else if (total == 1)
 						{
 							var modFileName = result.Mods.First().FileName;
 							var fileNames = String.Join(", ", files.Select(x => Path.GetFileName(x)));
-							ShowAlert($"Successfully imported '{modFileName}' from '{fileNames}'", AlertType.Success, 20);
+							ShowAlert($"已成功从 '{fileNames}' 导入模组 '{modFileName}'", AlertType.Success, 20);
 						}
 						else
 						{
-							ShowAlert("Skipped importing mod - No .pak file found", AlertType.Success, 20);
+							ShowAlert("已跳过模组导入：未找到 .pak 文件", AlertType.Success, 20);
 						}
 						var selectNext = result.Mods.Select(x => x.UUID).ToHashSet();
 						RxApp.MainThreadScheduler.Schedule(TimeSpan.FromMilliseconds(20), () =>
@@ -1945,11 +1945,11 @@ Directory the zip will be extracted to:
 					{
 						if (total == 0)
 						{
-							ShowAlert("No mods imported. Does the file contain a .pak?", AlertType.Warning, 60);
+							ShowAlert("未导入任何模组。该文件中是否包含 .pak 文件？", AlertType.Warning, 60);
 						}
 						else
 						{
-							ShowAlert($"Only imported {total}/{result.TotalPaks} mods - Check the log", AlertType.Danger, 60);
+							ShowAlert($"仅成功导入了 {total}/{result.TotalPaks} 个模组 - 请查看日志", AlertType.Danger, 60);
 						}
 					}
 				});
@@ -2004,8 +2004,8 @@ Directory the zip will be extracted to:
 			CheckFileExists = true,
 			CheckPathExists = true,
 			DefaultExt = ".zip",
-			Filter = $"All formats (*.pak;{_archiveFormatsStr};{_compressedFormatsStr})|*.pak;{_archiveFormatsStr};{_compressedFormatsStr}|Mod package (*.pak)|*.pak|Archive file ({_archiveFormatsStr})|{_archiveFormatsStr}|Compressed file ({_compressedFormatsStr})|{_compressedFormatsStr}|All files (*.*)|*.*",
-			Title = "Import Mods from Archive...",
+			Filter = $"所有支持的格式 (*.pak;{_archiveFormatsStr};{_compressedFormatsStr})|*.pak;{_archiveFormatsStr};{_compressedFormatsStr}|模组包 (*.pak)|*.pak|压缩包 ({_archiveFormatsStr})|{_archiveFormatsStr}|压缩文件 ({_compressedFormatsStr})|{_compressedFormatsStr}|所有文件 (*.*)|*.*",
+			Title = "导入模组或压缩包...",
 			ValidateNames = true,
 			ReadOnlyChecked = true,
 			Multiselect = true,
@@ -2047,7 +2047,7 @@ Directory the zip will be extracted to:
 			{
 				newOrder = new DivinityLoadOrder()
 				{
-					Name = $"New{nextOrders.Count}",
+					Name = $"新排序{nextOrders.Count}",
 					Order = ActiveMods.Select(m => m.ToOrderEntry()).ToList()
 				};
 				newOrder.FilePath = Path.Combine(GetOrdersDirectory(), DivinityModDataLoader.MakeSafeFilename(Path.Combine(newOrder.Name + ".json"), '_'));
@@ -2287,8 +2287,8 @@ Directory the zip will be extracted to:
 				var doReset = await Observable.Start(() =>
 				{
 					MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-					"It looks like the load order was reset externally. Use the last exported mod order?",
-					"Restore Load Order",
+					"检测到加载顺序已被外部重置。是否恢复上次导出的模组顺序？",
+					"恢复加载顺序",
 					MessageBoxButton.YesNo,
 					MessageBoxImage.Warning,
 					MessageBoxResult.Yes,
@@ -2360,19 +2360,19 @@ Directory the zip will be extracted to:
 		if (Directory.Exists(PathwayData.AppDataGameFolder))
 		{
 			DivinityApp.Log("Loading mods...");
-			await SetMainProgressTextAsync("Loading mods...");
+			await SetMainProgressTextAsync("正在加载模组...");
 			var loadedMods = await RunTaskStep(LoadModsAsync, taskStepAmount, []);
 			await IncreaseMainProgressValueAsync(taskStepAmount);
 
 			DivinityApp.Log("Loading profiles...");
-			await SetMainProgressTextAsync("Loading profiles...");
+			await SetMainProgressTextAsync("正在加载配置文件...");
 			var loadedProfiles = await RunTask(LoadProfilesAsync(), []);
 			await IncreaseMainProgressValueAsync(taskStepAmount);
 
 			if (string.IsNullOrEmpty(selectedProfileUUID) && (loadedProfiles != null && loadedProfiles.Count > 0))
 			{
 				DivinityApp.Log("Loading current profile...");
-				await SetMainProgressTextAsync("Loading current profile...");
+				await SetMainProgressTextAsync("正在加载当前配置文件...");
 				selectedProfileUUID = await RunTask(DivinityModDataLoader.GetSelectedProfileUUIDAsync(PathwayData.AppDataProfilesPath), string.Empty);
 				await IncreaseMainProgressValueAsync(taskStepAmount);
 			}
@@ -2386,7 +2386,7 @@ Directory the zip will be extracted to:
 			}
 
 			DivinityApp.Log("Loading external load orders...");
-			await SetMainProgressTextAsync("Loading external load orders...");
+			await SetMainProgressTextAsync("正在加载外部模组排序...");
 			var savedModOrderList = await RunTask(LoadExternalLoadOrdersAsync(), []);
 			await IncreaseMainProgressValueAsync(taskStepAmount);
 
@@ -2400,7 +2400,7 @@ Directory the zip will be extracted to:
 			}
 
 			DivinityApp.Log("Setting up mod lists...");
-			await SetMainProgressTextAsync("Setting up mod lists...");
+			await SetMainProgressTextAsync("正在整理模组列表...");
 
 			await Observable.Start(() =>
 			{
@@ -2440,7 +2440,7 @@ Directory the zip will be extracted to:
 
 				DivinityApp.Log($"Set profile to ({SelectedProfile?.Name})[{SelectedProfileIndex}]");
 
-				MainProgressWorkText = "Building mod order list...";
+				MainProgressWorkText = "正在生成模组排序列表...";
 
 				try
 				{
@@ -2460,13 +2460,13 @@ Directory the zip will be extracted to:
 
 				if (!GameDirectoryFound)
 				{
-					ShowAlert("Game Data folder is not valid. Please set it in the preferences window and refresh", AlertType.Danger);
+					ShowAlert("游戏 Data 文件夹路径无效。请在首选项窗口中配置并刷新", AlertType.Danger);
 					Window.OpenPreferences(false, true);
 				}
 			}, RxApp.MainThreadScheduler);
 
 			await IncreaseMainProgressValueAsync(taskStepAmount);
-			await SetMainProgressTextAsync("Finishing up...");
+			await SetMainProgressTextAsync("正在完成最后处理...");
 		}
 		else
 		{
@@ -2624,13 +2624,13 @@ Directory the zip will be extracted to:
 			}
 			catch (Exception ex)
 			{
-				ShowAlert($"Failed to save mod load order to '{outputPath}': {ex.Message}", AlertType.Danger);
+				ShowAlert($"保存模组加载顺序到 '{outputPath}' 失败: {ex.Message}", AlertType.Danger);
 				result = false;
 			}
 
 			if (result && !skipSaveConfirmation)
 			{
-				ShowAlert($"Saved mod load order to '{outputPath}'", AlertType.Success, 10);
+				ShowAlert($"已成功将模组加载顺序保存至 '{outputPath}'", AlertType.Success, 10);
 			}
 		}
 
@@ -2649,7 +2649,7 @@ Directory the zip will be extracted to:
 		{
 			AddExtension = true,
 			DefaultExt = ".json",
-			Filter = "JSON file (*.json)|*.json",
+			Filter = "JSON 文件 (*.json)|*.json",
 			InitialDirectory = startDirectory
 		};
 
@@ -2668,7 +2668,7 @@ Directory the zip will be extracted to:
 		dialog.CheckFileExists = false;
 		dialog.CheckPathExists = false;
 		dialog.OverwritePrompt = true;
-		dialog.Title = "Save Load Order As...";
+		dialog.Title = "另存加载顺序为...";
 
 		if (dialog.ShowDialog(Window) == true)
 		{
@@ -2679,7 +2679,7 @@ Directory the zip will be extracted to:
 			tempOrder.Order.AddRange(SelectedModOrder.Order.Where(x => Mods.Any(y => y.UUID == x.UUID)));
 			if (DivinityModDataLoader.ExportLoadOrderToFile(outputPath, tempOrder))
 			{
-				ShowAlert($"Saved mod load order to '{outputPath}'", AlertType.Success, 10);
+				ShowAlert($"已成功将模组加载顺序保存至 '{outputPath}'", AlertType.Success, 10);
 				var updatedOrder = false;
 				foreach (var order in ModOrderList)
 				{
@@ -2695,7 +2695,7 @@ Directory the zip will be extracted to:
 			}
 			else
 			{
-				ShowAlert($"Failed to save mod load order to '{outputPath}'", AlertType.Danger);
+				ShowAlert($"保存模组加载顺序至 '{outputPath}' 失败", AlertType.Danger);
 			}
 		}
 	}
@@ -2737,7 +2737,7 @@ Directory the zip will be extracted to:
 			if (missingResults.TotalMissing > 0)
 			{
 				List<string> messages = [];
-				
+
 				var missingMessage = missingResults.GetMissingMessage();
 				var missingDependencies = missingResults.GetDependenciesMessage();
 
@@ -2748,14 +2748,14 @@ Directory the zip will be extracted to:
 
 				if (!String.IsNullOrWhiteSpace(missingDependencies))
 				{
-					messages.Add($"Missing Dependencies:\n{missingDependencies}");
+					messages.Add($"缺少依赖项:\n{missingDependencies}");
 				}
 
 				var finalMessage = string.Join(Environment.NewLine, messages);
 				View.MainWindowMessageBox_OK.WindowBackground = MainViewControl.MessageBoxErrorBackgroundBrush;
 				View.MainWindowMessageBox_OK.Closed += MainWindowMessageBox_Closed_ResetColor;
 				View.MainWindowMessageBox_OK.ShowMessageBox(finalMessage,
-					"Missing Mods in Load Order", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+					"加载顺序中缺失模组", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
 			}
 			else
 			{
@@ -2804,13 +2804,13 @@ Directory the zip will be extracted to:
 
 			if (missingResults.ExtenderRequired.Count > 0)
 			{
-				var finalMessage = "The following mods require the Script Extender. Functionality may be limited without it.\n";
+				var finalMessage = "以下模组需要安装脚本扩展器 (Script Extender)。若未安装，相关功能可能会受到限制。\n";
 				finalMessage += missingResults.GetExtenderRequiredMessage();
 
 				View.MainWindowMessageBox_OK.WindowBackground = MainViewControl.MessageBoxErrorBackgroundBrush;
 				View.MainWindowMessageBox_OK.Closed += MainWindowMessageBox_Closed_ResetColor;
 				View.MainWindowMessageBox_OK.ShowMessageBox(finalMessage,
-					"Mods Require the Script Extender - Install it with the Tools menu!", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+					"模组需要脚本扩展器 - 请通过工具菜单进行安装！", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
 			}
 		}
 	}
@@ -2939,7 +2939,7 @@ Directory the zip will be extracted to:
 			{
 				await Observable.Start(() =>
 				{
-					ShowAlert($"Exported load order to '{outputPath}'", AlertType.Success, 15);
+					ShowAlert($"已成功将加载顺序导出到游戏: '{outputPath}'", AlertType.Success, 15);
 
 					if (DivinityModDataLoader.ExportedSelectedProfile(PathwayData.AppDataProfilesPath, SelectedProfile.UUID))
 					{
@@ -2974,11 +2974,11 @@ Directory the zip will be extracted to:
 			{
 				await Observable.Start(() =>
 				{
-					string msg = $"Problem exporting load order to '{outputPath}'. Is the file locked?";
+					string msg = $"无法将加载顺序导出至 '{outputPath}'。该文件是否正被其他程序占用？";
 					ShowAlert(msg, AlertType.Danger);
 					View.MainWindowMessageBox_OK.WindowBackground = MainViewControl.MessageBoxErrorBackgroundBrush;
 					View.MainWindowMessageBox_OK.Closed += MainWindowMessageBox_Closed_ResetColor;
-					View.MainWindowMessageBox_OK.ShowMessageBox(msg, "Mod Order Export Failed", MessageBoxButton.OK);
+					View.MainWindowMessageBox_OK.ShowMessageBox(msg, "导出模组顺序失败", MessageBoxButton.OK);
 					return Unit.Default;
 				}, RxApp.MainThreadScheduler);
 			}
@@ -2987,7 +2987,7 @@ Directory the zip will be extracted to:
 		{
 			await Observable.Start(() =>
 			{
-				ShowAlert("SelectedProfile or SelectedModOrder is null! Failed to export mod order", AlertType.Danger);
+				ShowAlert("当前配置文件或模组顺序为空，无法导出模组顺序", AlertType.Danger);
 				return Unit.Default;
 			}, RxApp.MainThreadScheduler);
 		}
@@ -3000,7 +3000,7 @@ Directory the zip will be extracted to:
 		DivinityApp.Log($"Main progress is complete.");
 
 		MainProgressValue = 1d;
-		MainProgressWorkText = "Finished.";
+		MainProgressWorkText = "已完成。";
 
 		if (MainProgressToken != null)
 		{
@@ -3023,7 +3023,11 @@ Directory the zip will be extracted to:
 		}
 	}
 
-	private static readonly ArchiveEncoding _archiveEncoding = new(Encoding.UTF8, Encoding.UTF8);
+	private static readonly ArchiveEncoding _archiveEncoding = new()
+	{
+		Default = Encoding.UTF8,
+		Forced = Encoding.UTF8
+	};
 	private static readonly ReaderOptions _importReaderOptions = new() { ArchiveEncoding = _archiveEncoding };
 	private static readonly WriterOptions _exportWriterOptions = new(CompressionType.Deflate) { ArchiveEncoding = _archiveEncoding };
 
@@ -3034,8 +3038,8 @@ Directory the zip will be extracted to:
 			CheckFileExists = true,
 			CheckPathExists = true,
 			DefaultExt = ".zip",
-			Filter = $"Archive file (*.7z,*.rar;*.zip)|{_archiveFormatsStr}|All files (*.*)|*.*",
-			Title = "Import Order & Mods from Archive...",
+			Filter = $"压缩包 (*.7z,*.rar;*.zip)|{_archiveFormatsStr}|所有文件 (*.*)|*.*",
+			Title = "从压缩包导入模组和排序...",
 			ValidateNames = true,
 			ReadOnlyChecked = true,
 			Multiselect = false,
@@ -3056,7 +3060,7 @@ Directory the zip will be extracted to:
 			//	view.AlertBar.SetDangerAlert($"Currently only .zip format archives are supported.", -1);
 			//	return;
 			//}
-			MainProgressTitle = $"Importing mods from '{dialog.FileName}'.";
+			MainProgressTitle = $"正在从 '{dialog.FileName}' 导入模组...";
 			MainProgressWorkText = "";
 			MainProgressValue = 0d;
 			MainProgressIsActive = true;
@@ -3094,7 +3098,7 @@ Directory the zip will be extracted to:
 					{
 						if (result.Orders.Count > 0)
 						{
-							messages.Add($"{result.Orders.Count} order(s)");
+							messages.Add($"{result.Orders.Count} 个加载顺序");
 
 							foreach (var order in result.Orders)
 							{
@@ -3122,7 +3126,7 @@ Directory the zip will be extracted to:
 						}
 						if (result.Mods.Count > 0)
 						{
-							messages.Add($"{result.Mods.Count} mod(s)");
+							messages.Add($"{result.Mods.Count} 个模组");
 
 							var selectNext = result.Mods.Select(x => x.UUID).ToHashSet();
 							RxApp.MainThreadScheduler.Schedule(TimeSpan.FromMilliseconds(20), () =>
@@ -3133,12 +3137,12 @@ Directory the zip will be extracted to:
 								Layout.SelectMods(selectMods);
 							});
 						}
-						var msg = String.Join(", ", messages);
-						ShowAlert($"Imported {msg}", AlertType.Success, 20);
+						var msg = String.Join(" 和 ", messages);
+						ShowAlert($"成功导入了 {msg}", AlertType.Success, 20);
 					}
 					else
 					{
-						ShowAlert($"Successfully extracted archive, but no mods or load orders were found", AlertType.Warning, 20);
+						ShowAlert("压缩包提取成功，但未发现任何模组或加载顺序文件", AlertType.Warning, 20);
 					}
 				});
 				return Disposable.Empty;
@@ -3249,7 +3253,12 @@ Directory the zip will be extracted to:
 					switch (extension)
 					{
 						case ".bz2":
-							decompressionStream = new BZip2Stream(fileStream, SharpCompress.Compressors.CompressionMode.Decompress, true);
+							decompressionStream = BZip2Stream.Create(
+								fileStream,
+								SharpCompress.Compressors.CompressionMode.Decompress,
+								decompressConcatenated: true,
+								leaveOpen: true,
+								tolerateTruncatedStream: false);
 							break;
 						case ".xz":
 							decompressionStream = new XZStream(fileStream);
@@ -3346,12 +3355,12 @@ Directory the zip will be extracted to:
 			RxApp.MainThreadScheduler.Schedule(_ =>
 			{
 				taskResult.AddError(filePath, ex);
-				ShowAlert($"Error extracting archive (check the log): {ex.Message}", AlertType.Danger, 0);
+				ShowAlert($"提取压缩包时出错（请查看日志）: {ex.Message}", AlertType.Danger, 0);
 			});
 		}
 		finally
 		{
-			RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"Cleaning up...");
+			RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = "正在清理临时文件...");
 			fileStream?.Close();
 			IncreaseMainProgressValue(taskStepAmount);
 
@@ -3401,7 +3410,7 @@ Directory the zip will be extracted to:
 				await fileStream.ReadAsync(new byte[fileStream.Length], 0, (int)fileStream.Length);
 				fileStream.Position = 0;
 				IncreaseMainProgressValue(taskStepAmount);
-				using (var archive = ArchiveFactory.Open(fileStream, _importReaderOptions))
+				using (var archive = ArchiveFactory.OpenArchive(fileStream, _importReaderOptions))
 				{
 					foreach (var file in archive.Entries)
 					{
@@ -3482,12 +3491,12 @@ Directory the zip will be extracted to:
 			RxApp.MainThreadScheduler.Schedule(_ =>
 			{
 				taskResult.AddError(archivePath, ex);
-				ShowAlert($"Error extracting archive (check the log): {ex.Message}", AlertType.Danger, 0);
+				ShowAlert($"提取压缩包时发生错误（请查看日志）: {ex.Message}", AlertType.Danger, 0);
 			});
 		}
 		finally
 		{
-			RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"Cleaning up...");
+			RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = "正在清理临时文件...");
 			fileStream?.Close();
 			IncreaseMainProgressValue(taskStepAmount);
 
@@ -3516,11 +3525,11 @@ Directory the zip will be extracted to:
 	{
 		//view.MainWindowMessageBox.Text = "Add active mods to a zip file?";
 		//view.MainWindowMessageBox.Caption = "Depending on the number of mods, this may take some time.";
-		MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"Save active mods to a zip file?{Environment.NewLine}Depending on the number of mods, this may take some time.", "Confirm Archive Creation",
+		MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"是否将已启用的模组打包到 ZIP 压缩包？{Environment.NewLine}根据模组数量，这可能需要一些时间。", "确认创建压缩包",
 			MessageBoxButton.OKCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, Window.MessageBoxStyle);
 		if (result == MessageBoxResult.OK)
 		{
-			MainProgressTitle = "Adding active mods to zip...";
+			MainProgressTitle = "正在将已启用模组添加到压缩包...";
 			MainProgressWorkText = "";
 			MainProgressValue = 0d;
 			MainProgressIsActive = true;
@@ -3566,7 +3575,7 @@ Directory the zip will be extracted to:
 			try
 			{
 				using (var stream = File.OpenWrite(outputPath))
-				using (var zipWriter = WriterFactory.Open(stream, ArchiveType.Zip, _exportWriterOptions))
+				using (var zipWriter = WriterFactory.OpenWriter(stream, ArchiveType.Zip, _exportWriterOptions))
 				{
 					var orderFileName = DivinityModDataLoader.MakeSafeFilename(Path.Combine(SelectedModOrder.Name + ".json"), '_');
 					var contents = JsonConvert.SerializeObject(SelectedModOrder, Newtonsoft.Json.Formatting.Indented);
@@ -3620,7 +3629,7 @@ Directory the zip will be extracted to:
 
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{
-					ShowAlert($"Exported load order to '{outputPath}'", AlertType.Success, 15);
+					ShowAlert($"已将加载顺序导出至 '{outputPath}'", AlertType.Success, 15);
 					ProcessHelper.TryOpenPath(Path.GetDirectoryName(outputPath));
 				});
 
@@ -3630,7 +3639,7 @@ Directory the zip will be extracted to:
 			{
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{
-					string msg = $"Error writing load order archive '{outputPath}': {ex}";
+					string msg = $"写入加载顺序压缩包 '{outputPath}' 时出错: {ex}";
 					DivinityApp.Log(msg);
 					ShowAlert(msg, AlertType.Danger);
 				});
@@ -3642,7 +3651,7 @@ Directory the zip will be extracted to:
 		{
 			RxApp.MainThreadScheduler.Schedule(() =>
 			{
-				ShowAlert("SelectedProfile or SelectedModOrder is null! Failed to export mod order", AlertType.Danger);
+				ShowAlert("当前配置(Profile)或模组顺序(ModOrder)为空！导出模组顺序失败", AlertType.Danger);
 			});
 		}
 
@@ -3667,8 +3676,8 @@ Directory the zip will be extracted to:
 				}
 				catch (Exception)
 				{
-					// ignored because an exception on a cancellation request 
-					// cannot be avoided if the stream gets disposed afterwards 
+					// ignored because an exception on a cancellation request
+					// cannot be avoided if the stream gets disposed afterwards
 				}
 			}, TaskCreationOptions.AttachedToParent);
 
@@ -3692,7 +3701,7 @@ Directory the zip will be extracted to:
 			{
 				AddExtension = true,
 				DefaultExt = ".zip",
-				Filter = "Archive file (*.zip)|*.zip",
+				Filter = "ZIP 压缩包 (*.zip)|*.zip",
 				InitialDirectory = GetInitialStartingDirectory()
 			};
 
@@ -3709,11 +3718,11 @@ Directory the zip will be extracted to:
 			dialog.CheckFileExists = false;
 			dialog.CheckPathExists = false;
 			dialog.OverwritePrompt = true;
-			dialog.Title = "Export Load Order As...";
+			dialog.Title = "将模组顺序另存为压缩包...";
 
 			if (dialog.ShowDialog(Window) == true)
 			{
-				MainProgressTitle = "Adding active mods to zip...";
+				MainProgressTitle = "正在将已启用模组添加到压缩包...";
 				MainProgressWorkText = "";
 				MainProgressValue = 0d;
 				MainProgressIsActive = true;
@@ -3730,7 +3739,7 @@ Directory the zip will be extracted to:
 		}
 		else
 		{
-			ShowAlert("SelectedProfile or SelectedModOrder is null! Failed to export mod order", AlertType.Danger);
+			ShowAlert("当前活动配置 (Profile) 或模组顺序为空！导出模组顺序失败", AlertType.Danger);
 		}
 
 	}
@@ -3767,7 +3776,7 @@ Directory the zip will be extracted to:
 			{
 				AddExtension = true,
 				DefaultExt = ".tsv",
-				Filter = "Spreadsheet file (*.tsv)|*.tsv|Plain text file (*.txt)|*.txt|JSON file (*.json)|*.json",
+				Filter = "表格文件 (*.tsv)|*.tsv|纯文本文件 (*.txt)|*.txt|JSON 文件 (*.json)|*.json",
 				InitialDirectory = GetInitialStartingDirectory()
 			};
 
@@ -3784,7 +3793,7 @@ Directory the zip will be extracted to:
 			dialog.CheckFileExists = false;
 			dialog.CheckPathExists = false;
 			dialog.OverwritePrompt = true;
-			dialog.Title = "Export Load Order As Text File...";
+			dialog.Title = "将模组顺序导出为文本文件...";
 
 			if (dialog.ShowDialog(Window) == true)
 			{
@@ -3813,18 +3822,18 @@ Directory the zip will be extracted to:
 				try
 				{
 					File.WriteAllText(dialog.FileName, outputText);
-					ShowAlert($"Exported order to '{dialog.FileName}'", AlertType.Success, 20);
+					ShowAlert($"已成功导出模组顺序列表至 '{dialog.FileName}'", AlertType.Success, 20);
 				}
 				catch (Exception ex)
 				{
-					ShowAlert($"Error exporting mod order to '{dialog.FileName}':\n{ex}", AlertType.Danger);
+					ShowAlert($"导出模组顺序列表至 '{dialog.FileName}' 时出错:\n{ex}", AlertType.Danger);
 				}
 			}
 		}
 		else
 		{
 			DivinityApp.Log($"SelectedProfile({SelectedProfile}) SelectedModOrder({SelectedModOrder})");
-			ShowAlert("SelectedProfile or SelectedModOrder is null! Failed to export mod order", AlertType.Danger);
+			ShowAlert("当前活动配置 (Profile) 或模组顺序为空！导出模组顺序失败", AlertType.Danger);
 		}
 	}
 
@@ -3835,8 +3844,8 @@ Directory the zip will be extracted to:
 			CheckFileExists = true,
 			CheckPathExists = true,
 			DefaultExt = ".lsv",
-			Filter = "Larian Save file (*.lsv)|*.lsv",
-			Title = "Load Mod Order From Save..."
+			Filter = "拉瑞安存档文件 (*.lsv)|*.lsv",
+			Title = "从游戏存档加载模组顺序..."
 		};
 
 		var startPath = "";
@@ -3869,7 +3878,7 @@ Directory the zip will be extracted to:
 			else
 			{
 				DivinityApp.Log($"Failed to load order from '{dialog.FileName}'.");
-				ShowAlert($"No mod order found in save \"{Path.GetFileNameWithoutExtension(dialog.FileName)}\"", AlertType.Danger, 30);
+				ShowAlert($"在游戏存档 \"{Path.GetFileNameWithoutExtension(dialog.FileName)}\" 中未发现任何模组加载顺序", AlertType.Danger, 30);
 			}
 		}
 		return null;
@@ -3916,8 +3925,8 @@ Directory the zip will be extracted to:
 			CheckFileExists = true,
 			CheckPathExists = true,
 			DefaultExt = ".json",
-			Filter = "All formats (*.json;*.txt;*.tsv)|*.json;*.txt;*.tsv|JSON file (*.json)|*.json|Text file (*.txt)|*.txt|TSV file (*.tsv)|*.tsv",
-			Title = "Load Mod Order From File...",
+			Filter = "所有支持的格式 (*.json;*.txt;*.tsv)|*.json;*.txt;*.tsv|JSON 文件 (*.json)|*.json|文本文件 (*.txt)|*.txt|TSV 文件 (*.tsv)|*.tsv",
+			Title = "从文件加载模组顺序...",
 			InitialDirectory = GetInitialStartingDirectory(Settings.LastLoadedOrderFilePath)
 		};
 
@@ -3937,30 +3946,30 @@ Directory the zip will be extracted to:
 						SelectedModOrder.SetOrder(newOrder);
 						if (LoadModOrder(SelectedModOrder))
 						{
-							ShowAlert($"Successfully overwrote order '{SelectedModOrder.Name}' with with imported order", AlertType.Success, 20);
+							ShowAlert($"已成功使用导入的顺序覆盖了当前的加载顺序 '{SelectedModOrder.Name}'", AlertType.Success, 20);
 						}
 						else
 						{
-							ShowAlert($"Failed to reset order to '{dialog.FileName}'", AlertType.Danger, 60);
+							ShowAlert($"重置加载顺序至 '{dialog.FileName}' 失败", AlertType.Danger, 60);
 						}
 					}
 					else
 					{
 						AddNewModOrder(newOrder);
 						LoadModOrder(newOrder);
-						ShowAlert($"Successfully imported order '{newOrder.Name}'", AlertType.Success, 20);
+						ShowAlert($"已成功导入加载顺序 '{newOrder.Name}'", AlertType.Success, 20);
 					}
 				}
 				else
 				{
 					AddNewModOrder(newOrder);
 					LoadModOrder(newOrder);
-					ShowAlert($"Successfully imported order '{newOrder.Name}'", AlertType.Success, 20);
+					ShowAlert($"已成功导入加载顺序 '{newOrder.Name}'", AlertType.Success, 20);
 				}
 			}
 			else
 			{
-				ShowAlert($"Failed to import order from '{dialog.FileName}'", AlertType.Danger, 60);
+				ShowAlert($"从 '{dialog.FileName}' 导入加载顺序失败", AlertType.Danger, 60);
 			}
 		}
 	}
@@ -3977,8 +3986,8 @@ Directory the zip will be extracted to:
 			CheckFileExists = true,
 			CheckPathExists = true,
 			DefaultExt = ".lsv",
-			Filter = "Larian Save file (*.lsv)|*.lsv",
-			Title = "Pick Save to Rename..."
+			Filter = "拉瑞安存档文件 (*.lsv)|*.lsv",
+			Title = "选择要重命名的存档..."
 		};
 
 		var startPath = "";
@@ -4009,8 +4018,8 @@ Directory the zip will be extracted to:
 				CheckFileExists = false,
 				CheckPathExists = false,
 				DefaultExt = ".lsv",
-				Filter = "Larian Save file (*.lsv)|*.lsv",
-				Title = "Rename Save As...",
+				Filter = "拉瑞安存档文件 (*.lsv)|*.lsv",
+				Title = "将存档重命名为...",
 				InitialDirectory = rootFolder,
 				FileName = rootFileName + "_1.lsv"
 			};
@@ -4056,7 +4065,7 @@ Directory the zip will be extracted to:
 							}
 						}
 
-						ShowAlert($"Successfully renamed '{dialog.FileName}' to '{renameDialog.FileName}'", AlertType.Success, 15);
+						ShowAlert($"已成功将存档重命名：从 '{Path.GetFileName(dialog.FileName)}' 改为 '{Path.GetFileName(renameDialog.FileName)}'", AlertType.Success, 15);
 					}
 					catch (Exception ex)
 					{
@@ -4124,7 +4133,7 @@ Directory the zip will be extracted to:
 		Settings.Loaded = loaded;
 
 		ModUpdatesViewVisible = ModUpdatesAvailable = false;
-		MainProgressTitle = "Loading...";
+		MainProgressTitle = "正在加载...";
 		MainProgressValue = 0d;
 		CanCancelProgress = false;
 		MainProgressIsActive = true;
@@ -4141,8 +4150,8 @@ Directory the zip will be extracted to:
 					RxApp.MainThreadScheduler.Schedule(() =>
 					{
 						var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-						"BG3MM is currently running as an administrator, which can lead to issues.\nPlease restart BG3MM in non-admin mode.\nClick Cancel to disable this warning in the future.",
-						"Process Elevation Warning",
+						"BG3ModManager 当前正以管理员权限运行，这可能会导致一些问题（例如无法拖拽文件）。\n请在非管理员模式下重启 BG3ModManager。\n点击“取消”可在以后禁用此警告。",
+						"程序提权警告",
 						MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.OK, Window.MessageBoxStyle);
 						if(result == MessageBoxResult.Cancel)
 						{
@@ -4168,11 +4177,11 @@ Directory the zip will be extracted to:
 	{
 		if (totalHidden > 0)
 		{
-			return $"{totalCount - totalHidden} Matched, {totalHidden} Hidden";
+			return $"匹配 {totalCount - totalHidden} 个，隐藏 {totalHidden} 个";
 		}
 		else
 		{
-			return $"0 Matched";
+			return "匹配 0 个";
 		}
 	}
 
@@ -4180,9 +4189,9 @@ Directory the zip will be extracted to:
 	{
 		if (totalHidden > 0)
 		{
-			return $", {total} Selected";
+			return $"，已选择 {total} 个";
 		}
-		return $"{total} Selected";
+		return $"已选择 {total} 个";
 	}
 
 	public void OnFilterTextChanged(string searchText, IEnumerable<DivinityModData> modDataList)
@@ -4331,7 +4340,7 @@ Directory the zip will be extracted to:
 
 	private void DeleteOrder(DivinityLoadOrder order)
 	{
-		MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"Delete load order '{order.Name}'? This cannot be undone.", "Confirm Order Deletion",
+		MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"确定要删除加载顺序 '{order.Name}' 吗？此操作将无法撤销。", "确认删除加载顺序",
 			MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, Window.MessageBoxStyle);
 		if (result == MessageBoxResult.Yes)
 		{
@@ -4340,7 +4349,7 @@ Directory the zip will be extracted to:
 			if (!String.IsNullOrEmpty(order.FilePath) && File.Exists(order.FilePath))
 			{
 				RecycleBinHelper.DeleteFile(order.FilePath, false, false);
-				ShowAlert($"Sent load order '{order.FilePath}' to the recycle bin", AlertType.Warning, 25);
+				ShowAlert($"已将加载顺序文件 '{order.FilePath}' 放入回收站", AlertType.Warning, 25);
 			}
 		}
 	}
@@ -4389,7 +4398,7 @@ Directory the zip will be extracted to:
 		{
 			ShowNewFolderButton = true,
 			UseDescriptionForTitle = true,
-			Description = "Select folder to extract mod(s) to...",
+			Description = "请选择模组解压目录...",
 			SelectedPath = GetInitialStartingDirectory(Settings.LastExtractOutputPath)
 		};
 
@@ -4403,7 +4412,7 @@ Directory the zip will be extracted to:
 
 			int totalWork = SelectedPakMods.Count;
 			double taskStepAmount = 1.0 / totalWork;
-			MainProgressTitle = $"Extracting {totalWork} mods...";
+			MainProgressTitle = $"正在提取 {totalWork} 个模组...";
 			MainProgressValue = 0d;
 			MainProgressToken = new CancellationTokenSource();
 			CanCancelProgress = true;
@@ -4421,7 +4430,7 @@ Directory the zip will be extracted to:
 					{
 						//Put each pak into its own folder
 						string pakName = Path.GetFileNameWithoutExtension(path);
-						RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"Extracting {pakName}...");
+						RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"正在提取 {pakName}...");
 						string destination = Path.Combine(outputDirectory, pakName);
 
 						//In case the foldername == the pak name and we're only extracting one pak
@@ -4453,12 +4462,12 @@ Directory the zip will be extracted to:
 				{
 					if (successes >= totalWork)
 					{
-						ShowAlert($"Successfully extracted all selected mods to '{dialog.SelectedPath}'", AlertType.Success, 20);
+						ShowAlert($"成功将所有选定模组提取至 '{dialog.SelectedPath}'", AlertType.Success, 20);
 						ProcessHelper.TryOpenPath(openOutputPath);
 					}
 					else
 					{
-						ShowAlert($"Error occurred when extracting selected mods to '{dialog.SelectedPath}'", AlertType.Danger, 30);
+						ShowAlert($"将选定模组提取至 '{dialog.SelectedPath}' 时出错", AlertType.Danger, 30);
 					}
 				});
 
@@ -4477,7 +4486,7 @@ Directory the zip will be extracted to:
 		}
 		else
 		{
-			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"Extract the following mods?\n'{String.Join("\n", SelectedPakMods.Select(x => $"{x.DisplayName}"))}", "Extract Mods?",
+			MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, $"确定要提取以下模组吗？\n{String.Join("\n", SelectedPakMods.Select(x => $"{x.DisplayName}"))}", "提取模组？",
 			MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, Window.MessageBoxStyle);
 			if (result == MessageBoxResult.Yes)
 			{
@@ -4491,7 +4500,7 @@ Directory the zip will be extracted to:
 		if (SelectedAdventureMod == null || SelectedAdventureMod.IsEditorMod || SelectedAdventureMod.IsLarianMod || !File.Exists(SelectedAdventureMod.FilePath))
 		{
 			var displayName = SelectedAdventureMod != null ? SelectedAdventureMod.DisplayName : "";
-			ShowAlert($"Current adventure mod '{displayName}' is not extractable", AlertType.Warning, 30);
+			ShowAlert($"当前的冒险模组 '{displayName}' 无法提取", AlertType.Warning, 30);
 			return;
 		}
 
@@ -4499,7 +4508,7 @@ Directory the zip will be extracted to:
 		{
 			ShowNewFolderButton = true,
 			UseDescriptionForTitle = true,
-			Description = "Select folder to extract mod to...",
+			Description = "请选择模组解压目录...",
 			SelectedPath = GetInitialStartingDirectory(Settings.LastExtractOutputPath)
 		};
 
@@ -4511,7 +4520,7 @@ Directory the zip will be extracted to:
 			string outputDirectory = dialog.SelectedPath;
 			DivinityApp.Log($"Extracting adventure mod to '{outputDirectory}'.");
 
-			MainProgressTitle = $"Extracting {SelectedAdventureMod.DisplayName}...";
+			MainProgressTitle = $"正在提取 {SelectedAdventureMod.DisplayName}...";
 			MainProgressValue = 0d;
 			MainProgressToken = new CancellationTokenSource();
 			CanCancelProgress = true;
@@ -4527,7 +4536,7 @@ Directory the zip will be extracted to:
 				try
 				{
 					string pakName = Path.GetFileNameWithoutExtension(path);
-					RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"Extracting {pakName}...");
+					RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"正在提取 {pakName}...");
 					string destination = Path.Combine(outputDirectory, pakName);
 					if (Path.GetDirectoryName(outputDirectory).Equals(pakName))
 					{
@@ -4549,12 +4558,12 @@ Directory the zip will be extracted to:
 				{
 					if (success)
 					{
-						ShowAlert($"Successfully extracted adventure mod to '{dialog.SelectedPath}'", AlertType.Success, 20);
+						ShowAlert($"成功将冒险模组提取至 '{dialog.SelectedPath}'", AlertType.Success, 20);
 						ProcessHelper.TryOpenPath(openOutputPath);
 					}
 					else
 					{
-						ShowAlert($"Error occurred when extracting adventure mod to '{dialog.SelectedPath}'", AlertType.Danger, 30);
+						ShowAlert($"提取冒险模组至 '{dialog.SelectedPath}' 时出错", AlertType.Danger, 30);
 					}
 				});
 
@@ -4670,7 +4679,7 @@ Directory the zip will be extracted to:
 
 			if (totalRemoved > 0)
 			{
-				ShowAlert($"Removed {totalRemoved} missing mods from the current order. Save to confirm", AlertType.Warning);
+				ShowAlert($"已从当前加载顺序中移除 {totalRemoved} 个缺失的模组。请保存以确认更改。", AlertType.Warning);
 			}
 		});
 	}
@@ -4861,7 +4870,7 @@ Directory the zip will be extracted to:
 
 	private void OnNexusModsRateLimitsUpdated(NexusModsRateLimitsUpdatedEventArgs e)
 	{
-		StatusBarRightText = $"NexusMods Limits [Hourly ({e.Limits.HourlyRemaining}/{e.Limits.HourlyLimit}) Daily ({e.Limits.DailyRemaining}/{e.Limits.DailyLimit})]";
+		StatusBarRightText = $"NexusMods 限额 [每小时 ({e.Limits.HourlyRemaining}/{e.Limits.HourlyLimit}) 每日 ({e.Limits.DailyRemaining}/{e.Limits.DailyLimit})]";
 	}
 
 	IDisposable _updateOrderTask = null;
@@ -4967,7 +4976,7 @@ Directory the zip will be extracted to:
 		{
 			ModUpdatesViewData?.Clear();
 			ModUpdatesViewVisible = ModUpdatesAvailable = false;
-			MainProgressTitle = !IsInitialized ? "Loading..." : "Refreshing...";
+			MainProgressTitle = !IsInitialized ? "正在加载..." : "正在刷新...";
 			MainProgressValue = 0d;
 			CanCancelProgress = false;
 			MainProgressIsActive = true;
@@ -5072,7 +5081,7 @@ Directory the zip will be extracted to:
 				}
 				if (selectedMods.Any(x => x.IsEditorMod))
 				{
-					ShowAlert("Editor mods cannot be deleted with the Mod Manager", AlertType.Warning, 60);
+					ShowAlert("编辑器开发模组 (Editor mods) 无法使用模组管理器删除", AlertType.Warning, 60);
 				}
 			}
 			else
@@ -5107,11 +5116,11 @@ Directory the zip will be extracted to:
 			if (!String.IsNullOrWhiteSpace(path))
 			{
 				Clipboard.SetText(path);
-				ShowAlert($"Copied '{path}' to clipboard", 0, 10);
+				ShowAlert($"已将路径 '{path}' 复制到剪贴板", 0, 10);
 			}
 			else
 			{
-				ShowAlert($"Path '{path}' not found", AlertType.Danger, 30);
+				ShowAlert($"未找到路径 '{path}'", AlertType.Danger, 30);
 			}
 		});
 
@@ -5131,16 +5140,16 @@ Directory the zip will be extracted to:
 						if (i < ActiveMods.Count - 1) text += Environment.NewLine;
 					}
 					Clipboard.SetText(text);
-					ShowAlert("Copied mod order to clipboard", AlertType.Info, 10);
+					ShowAlert("已将模组顺序复制到剪贴板", AlertType.Info, 10);
 				}
 				else
 				{
-					ShowAlert("Current order is empty", AlertType.Warning, 10);
+					ShowAlert("当前加载顺序为空", AlertType.Warning, 10);
 				}
 			}
 			catch (Exception ex)
 			{
-				ShowAlert($"Error copying order to clipboard: {ex}", AlertType.Danger, 15);
+				ShowAlert($"将顺序复制到剪贴板时出错: {ex}", AlertType.Danger, 15);
 			}
 		});
 
@@ -5294,18 +5303,18 @@ Directory the zip will be extracted to:
 			if (!String.IsNullOrWhiteSpace(path))
 			{
 				Clipboard.SetText(path);
-				ShowAlert($"Copied '{path}' to clipboard", 0, 10);
+				ShowAlert($"已将路径 '{path}' 复制到剪贴板", 0, 10);
 			}
 			else
 			{
-				ShowAlert($"Path '{path}' not found", AlertType.Danger, 30);
+				ShowAlert($"未找到路径 '{path}'", AlertType.Danger, 30);
 			}
 		}, adventureModCanOpenObservable);
 
 		var canCheckForUpdates = this.WhenAnyValue(x => x.MainProgressIsActive, b => b == false);
 		void checkForUpdatesAction()
 		{
-			ShowAlert("Checking for updates...", AlertType.Info, 30);
+			ShowAlert("正在检查更新...", AlertType.Info, 30);
 			CheckForUpdates(true);
 			SaveSettings();
 		}
@@ -5367,12 +5376,12 @@ Directory the zip will be extracted to:
 
 		DivinityInteractions.ConfirmModDeletion.RegisterHandler(async interaction =>
 		{
-			var sentenceStart = interaction.Input.PermanentlyDelete ? "Permanently delete" : "Delete";
-			var msg = $"{sentenceStart} {interaction.Input.Total} mod file(s)?";
+			var actionName = interaction.Input.PermanentlyDelete ? "永久删除" : "删除";
+			var msg = $"确定要{actionName}这 {interaction.Input.Total} 个模组文件吗？";
 
 			var confirmed = await Observable.Start((Func<bool>)(() =>
 			{
-				MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, msg, "Confirm Mod Deletion",
+				MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(Window, msg, "确认删除模组",
 				MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, Window.MessageBoxStyle);
 				if (result == MessageBoxResult.Yes)
 				{
@@ -5419,14 +5428,14 @@ Directory the zip will be extracted to:
 					var modSettingsData = await DivinityModDataLoader.LoadModSettingsFileAsync(e.FullPath);
 					if (activeCount > 0 && modSettingsData.CountActive() <= 0)
 					{
-						ShowAlert("The active load order (modsettings.lsx) has been reset externally", AlertType.Danger);
+						ShowAlert("当前活动的加载顺序 (modsettings.lsx) 已在外部被重置", AlertType.Danger);
 						RxApp.MainThreadScheduler.Schedule(() =>
 						{
 							//Window.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
 							Window.FlashTaskbar();
 							var result = Xceed.Wpf.Toolkit.MessageBox.Show(Window,
-							"The active load order (modsettings.lsx) has been reset externally, which has deactivated your mods.\nOne or more mods may be invalid in your current load order.",
-							"Mod Order Reset",
+							"活动的加载顺序 (modsettings.lsx) 已在外部被重置，这导致您的所有模组被停用。\n这可能是由于当前加载顺序中存在一个或多个无效模组。",
+							"模组顺序已被重置",
 							MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, Window.MessageBoxStyle);
 						});
 					}

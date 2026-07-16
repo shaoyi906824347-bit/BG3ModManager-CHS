@@ -53,19 +53,19 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<TextBlock Padding="4" Text="Active Mods" />
+				<TextBlock Padding="4" Text="已启用模组" />
 				<c:UnfocusableTextBox x:Name="ActiveModsFilterTextBox"
 					Grid.Column="1"
 					Width="200"
 					Padding="4,0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
-					behavior:ScreenReaderHelperBehavior.Name="Active Mods Filter"
+					behavior:ScreenReaderHelperBehavior.Name="已启用模组过滤器"
 					AcceptsReturn="False"
 					AcceptsTab="False"
 					CanUndoTextOnEscape="True"
 					TextAlignment="Left"
-					ToolTip="Filter Active Mods"
+					ToolTip="过滤已启用的模组"
 					UpdateBindingOnFocusLost="True" />
 				<TextBlock Grid.Column="1"
 					Margin="0"
@@ -74,7 +74,7 @@
 					VerticalAlignment="Center"
 					Foreground="{DynamicResource {x:Static adonisUI:Brushes.DisabledForegroundBrush}}"
 					IsHitTestVisible="False"
-					Text="Filter Active Mods">
+					Text="过滤已启用的模组">
 					<TextBlock.Style>
 						<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
 							<Setter Property="Visibility" Value="Collapsed" />
@@ -91,7 +91,7 @@
 					Margin="0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
-					behavior:ScreenReaderHelperBehavior.Name="Total Hidden Active Mods"
+					behavior:ScreenReaderHelperBehavior.Name="已隐藏的启用模组总数"
 					AutomationProperties.HelpText="{Binding Text, RelativeSource={RelativeSource Self}}" />
 				<TextBlock x:Name="ActiveSelectedText"
 					Grid.Column="4"
@@ -99,7 +99,13 @@
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
 					AutomationProperties.HelpText="{Binding Text, RelativeSource={RelativeSource Self}}"
-					AutomationProperties.Name="Active Mods" />
+					AutomationProperties.Name="已启用模组" />
+				<StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+					<TextBlock Text="汉化：" FontSize="11" Opacity="0.8" VerticalAlignment="Center" />
+					<TextBlock Text="可爱女陔王语嫣 (小黑盒 ID: 29602586)" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+					<TextBlock Text="  反馈邮箱：" FontSize="11" Margin="10,0,0,0" Opacity="0.8" VerticalAlignment="Center" />
+					<c:HyperlinkText DisplayText="bg3modfeedback@163.com" URL="mailto:bg3modfeedback@163.com" FontSize="11" VerticalAlignment="Center" />
+				</StackPanel>
 			</Grid>
 			<Grid x:Name="ActiveModListGrid" Grid.Row="1">
 				<Grid.RowDefinitions>
@@ -109,7 +115,7 @@
 				</Grid.RowDefinitions>
 				<c:ModListView x:Name="ActiveModsListView"
 					MaxHeight="99999"
-					behavior:ScreenReaderHelperBehavior.Name="Active Mods"
+					behavior:ScreenReaderHelperBehavior.Name="已启用模组"
 					dd:DragDrop.DragHandler="{Binding DragHandler}"
 					dd:DragDrop.DropHandler="{Binding DropHandler}"
 					GridViewColumnHeader.Click="ListView_Click"
@@ -129,7 +135,7 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<TextBlock HorizontalAlignment="Center" FontSize="16" Text="Overrides" />
+					<TextBlock HorizontalAlignment="Center" FontSize="16" Text="覆盖模组 (直接生效/无需排序)" />
 					<c:ModListView x:Name="ForceLoadedModsListView"
 						Grid.Row="1"
 						MaxHeight="99999"
@@ -160,19 +166,19 @@
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<TextBlock Padding="4" Text="Inactive Mods" />
+				<TextBlock Padding="4" Text="未启用模组" />
 				<c:UnfocusableTextBox x:Name="InactiveModsFilterTextBox"
 					Grid.Column="1"
 					Width="200"
 					Padding="4,0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
-					behavior:ScreenReaderHelperBehavior.Name="Inactive Mods Filter"
+					behavior:ScreenReaderHelperBehavior.Name="未启用模组过滤器"
 					AcceptsReturn="False"
 					AcceptsTab="False"
 					CanUndoTextOnEscape="True"
 					TextAlignment="Left"
-					ToolTip="Filter Inactive Mods"
+					ToolTip="过滤未启用的模组"
 					UpdateBindingOnFocusLost="True" />
 				<TextBlock Grid.Column="1"
 					Width="200"
@@ -182,7 +188,7 @@
 					VerticalAlignment="Center"
 					Foreground="{DynamicResource {x:Static adonisUI:Brushes.DisabledForegroundBrush}}"
 					IsHitTestVisible="False"
-					Text="Filter Inactive Mods">
+					Text="过滤未启用的模组">
 					<TextBlock.Style>
 						<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
 							<Setter Property="Visibility" Value="Collapsed" />
@@ -199,21 +205,21 @@
 					Margin="0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
-					behavior:ScreenReaderHelperBehavior.Name="Total Hidden Inactive Mods"
+					behavior:ScreenReaderHelperBehavior.Name="已隐藏的未启用模组总数"
 					AutomationProperties.HelpText="{Binding Text, RelativeSource={RelativeSource Self}}" />
 				<TextBlock x:Name="InactiveSelectedText"
 					Grid.Column="4"
 					Margin="0"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Center"
-					behavior:ScreenReaderHelperBehavior.Name="Total Inactive Mods Selected"
+					behavior:ScreenReaderHelperBehavior.Name="选中的未启用模组总数"
 					AutomationProperties.HelpText="{Binding Text, RelativeSource={RelativeSource Self}}"
-					AutomationProperties.Name="Inactive Mods" />
+					AutomationProperties.Name="未启用模组" />
 			</Grid>
 			<c:ModListView x:Name="InactiveModsListView"
 				Grid.Row="2"
 				MaxHeight="99999"
-				behavior:ScreenReaderHelperBehavior.Name="Inactive Mods"
+				behavior:ScreenReaderHelperBehavior.Name="未启用模组"
 				dd:DragDrop.DragHandler="{Binding DragHandler}"
 				dd:DragDrop.DropHandler="{Binding DropHandler}"
 				GridViewColumnHeader.Click="ListView_Click"

@@ -4,12 +4,12 @@ namespace DivinityModManager;
 
 public enum ModSourceType
 {
-	[Description("None")]
+	[Description("无")]
 	NONE,
-	[Description("Steam Workshop")]
+	[Description("Steam 创意工坊")]
 	STEAM,
 	[Description("Nexus Mods")]
 	NEXUSMODS,
-	[Description("Github")]
+	[Description("GitHub")]
 	GITHUB
 }

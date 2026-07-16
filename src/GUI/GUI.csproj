@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		
+
 		<RootNamespace>DivinityModManager</RootNamespace>
 
 		<StartupObject>DivinityModManager.Program</StartupObject>
@@ -22,11 +22,11 @@
 		<Description>A mod manager for Baldur's Gate 3.</Description>
 
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>$(SolutionDir)\bin\$(Configuration)\</OutputPath>
+		<OutputPath>$(MSBuildThisFileDirectory)..\..\bin\$(Configuration)\</OutputPath>
 
 		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		
+
 		<Platforms>AnyCPU;x64</Platforms>
 		<PlatformTarget>x64</PlatformTarget>
 		<Configurations>Debug;Release;Publish;PublishTest</Configurations>
@@ -39,11 +39,31 @@
 		<Optimize>False</Optimize>
 		<DebugType>full</DebugType>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
-		<ProjectReference Include="$(SolutionDir)\src\Core\DivinityModManagerCore.csproj" />
+		<ProjectReference Include="$(MSBuildThisFileDirectory)..\Core\DivinityModManagerCore.csproj" />
+		<Reference Include="LSLibNative">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\LSLibNative.dll</HintPath>
+		</Reference>
+		<Reference Include="LSLib">
+			<HintPath>$(MSBuildThisFileDirectory)..\..\..\_Lib\LSLib.dll</HintPath>
+		</Reference>
 	</ItemGroup>
-	
+
+	<!--
+		LSLibNative.dll is a mixed-mode C++/CLI assembly; loading it at runtime requires Ijwhost.dll.
+		When LSLibNative was a ProjectReference (.vcxproj), the SDK copied Ijwhost.dll automatically.
+		Switching to a plain <Reference> dropped it (and a few other native DLLs), which broke .pak reading
+		(mod import would report "no .pak found"). Copy the native runtime DLLs from _Lib into the output.
+	-->
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)..\..\..\_Lib\Ijwhost.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+		<None Include="$(MSBuildThisFileDirectory)..\..\..\_Lib\WebView2Loader.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+		<None Include="$(MSBuildThisFileDirectory)..\..\..\_Lib\Tolk.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+		<None Include="$(MSBuildThisFileDirectory)..\..\..\_Lib\SAAPI64.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+		<None Include="$(MSBuildThisFileDirectory)..\..\..\_Lib\nvdaControllerClient64.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="AdonisUI" Version="1.17.1" />
 		<PackageReference Include="AdonisUI.ClassicTheme" Version="1.17.1" />
@@ -59,14 +79,16 @@
 		<PackageReference Include="ReactiveUI" Version="20.1.63" />
 		<PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
 		<PackageReference Include="ReactiveUI.WPF" Version="20.1.63" />
-		<PackageReference Include="SharpCompress" Version="0.39.0" />
+		<PackageReference Include="SharpCompress" Version="0.50.0" />
 		<PackageReference Include="Splat" Version="15.3.1" />
 		<PackageReference Include="Splat.Drawing" Version="15.3.1" />
 		<PackageReference Include="System.Reactive" Version="6.0.1" />
+		<!-- Override AdonisUI's legacy 4.6.0 dependency, which is affected by CVE-2021-24112. -->
+		<PackageReference Include="System.Drawing.Common" Version="8.0.28" />
 		<PackageReference Include="WpfScreenHelper" Version="2.1.1" />
 		<PackageReference Include="ZstdSharp.Port" Version="0.8.5" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<None Include="Resources\*.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -84,11 +106,11 @@
 
 	<Target Name="CrossSpeakLibraryFiles" AfterTargets="AfterBuild">
 		<ItemGroup>
-			<LibFiles Include="$(SolutionDir)\External\CrossSpeak\CrossSpeak\lib\windows\*.dll" />
+			<LibFiles Include="$(MSBuildThisFileDirectory)..\..\External\CrossSpeak\CrossSpeak\lib\windows\*.dll" />
 		</ItemGroup>
 		<Copy SourceFiles="@(LibFiles)" DestinationFolder="$(OutputPath)_Lib" OverwriteReadOnlyFiles="true" ContinueOnError="true" />
 	</Target>
-	
+
 	<Target Name="SetupLibFolder" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Publish' or '$(Configuration)' == 'PublishTest'">
 		<ItemGroup>
 			<DeleteDebug Include="$(OutputPath)*.pdb" />
@@ -100,11 +122,30 @@
 		</Delete>
 		<RemoveDir Directories="$(OutputPath)de;$(OutputPath)en;$(OutputPath)es;$(OutputPath)fr;$(OutputPath)it;$(OutputPath)ja;$(OutputPath)ko;$(OutputPath)ru;$(OutputPath)zh-Hans;$(OutputPath)zh-Hant;$(OutputPath)cs-CZ;$(OutputPath)hu;$(OutputPath)ja-JP;$(OutputPath)pt-BR;$(OutputPath)ro;$(OutputPath)sv;$(OutputPath)ar;$(OutputPath)cs;$(OutputPath)da;$(OutputPath)lv;$(OutputPath)nl;$(OutputPath)pl;$(OutputPath)pt;$(OutputPath)sk;$(OutputPath)th;$(OutputPath)tr;$(OutputPath)zh;$(OutputPath)zh-TW;$(OutputPath)runtimes;$(OutputPath)_Logs;$(OutputPath)Data" ContinueOnError="true" />
 	</Target>
-	
-	<Target Name="RunBuildRelease" AfterTargets="SetupLibFolder" Condition="'$(Configuration)' == 'Publish'">
+
+	<Target Name="RunBuildRelease"
+	        AfterTargets="SetupLibFolder"
+	        DependsOnTargets="BuildToolbox"
+	        Condition="'$(Configuration)' == 'Publish'">
 		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
 			<Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
 		</GetAssemblyIdentity>
-		<Exec Command="python &quot;BuildRelease.py&quot; &quot;%(AssemblyVersion.Version)&quot;" WorkingDirectory="$(SolutionDir)" />
+		<Exec Command="python &quot;BuildRelease.py&quot; &quot;%(AssemblyVersion.Version)&quot;"
+		      WorkingDirectory="$(MSBuildThisFileDirectory)..\.." />
+	</Target>
+
+	<!--
+		Toolbox.csproj is a standalone exe (Script Extender auto-updater) invoked at runtime from Tools\Toolbox.exe.
+		It is not a ProjectReference, so building GUI alone never produced it, leaving the Script Extender updater
+		dead. Build it here so a plain `dotnet build GUI.csproj` yields a complete output. Its OutputPath is
+		$(SolutionDir)bin\$(Configuration)\Tools\, so SolutionDir is passed explicitly for single-project builds.
+	-->
+	<Target Name="BuildToolbox" AfterTargets="AfterBuild">
+		<MSBuild Projects="$(MSBuildThisFileDirectory)..\Toolbox\Toolbox.csproj"
+		         Targets="Restore"
+		         Properties="Configuration=$(Configuration);Platform=x64;SolutionDir=$(MSBuildThisFileDirectory)..\..\" />
+		<MSBuild Projects="$(MSBuildThisFileDirectory)..\Toolbox\Toolbox.csproj"
+		         Targets="Build"
+		         Properties="Configuration=$(Configuration);Platform=x64;SolutionDir=$(MSBuildThisFileDirectory)..\..\" />
 	</Target>
 </Project>
