@@ -19,6 +19,8 @@ public static class DivinityApp
 	public const string URL_REPO = @"https://github.com/LaughingLeader/BG3ModManager";
 	public const string URL_CHS_REPO = @"https://github.com/shaoyi906824347-bit/BG3ModManager-CHS";
 	public const string URL_CHS_RELEASES = @"https://github.com/shaoyi906824347-bit/BG3ModManager-CHS/releases";
+	public const string URL_CHS_LATEST_RELEASE_API = @"https://api.github.com/repos/shaoyi906824347-bit/BG3ModManager-CHS/releases/latest";
+	public const int CHS_RELEASE_REVISION = 3;
 	public const string URL_CHANGELOG = @"https://github.com/LaughingLeader/BG3ModManager/wiki/Changelog";
 	public const string URL_CHANGELOG_RAW = @"https://raw.githubusercontent.com/wiki/LaughingLeader/BG3ModManager/Changelog.md";
 	public const string URL_UPDATE = @"https://raw.githubusercontent.com/LaughingLeader/BG3ModManager/master/Update.xml";

@@ -40,20 +40,24 @@ public static class UpdateText
 {
 	public const string ViewChineseRelease = "查看汉化版发布页面";
 	public const string ViewChineseReleaseTooltip = "打开汉化版 Releases 页面。此操作只打开网页，不会覆盖当前程序。";
-	public const string OfficialChangelog = "官方更新日志（英文）";
-	public const string UpdateFoundAlert = "发现官方新版本";
-	public const string NoUpdateAlert = "当前官方基础版本已是最新";
+	public const string OfficialChangelog = "官方更新日志（英文，仅供参考）";
+	public const string UpdateFoundAlert = "发现可用更新";
+	public const string NoUpdateAlert = "当前汉化版和官方基础版本均已是最新";
 	public const string CheckFailedTitle = "更新检查失败";
 	public const string NetworkError = "连接官方更新服务器时遇到问题。请检查网络连接后重试。";
-	public const string CheckOnStartupLabel = "启动时检查官方版本更新（仅提醒）";
-	public const string CheckOnStartupDescription = "每次启动模组管理器时检查原版是否发布了新版本。\n此功能只显示提醒并引导你查看汉化版发布页面，不会下载、退出程序或覆盖汉化文件。";
+	public const string CheckOnStartupLabel = "启动时检查汉化版和官方版本更新（仅提醒）";
+	public const string CheckOnStartupDescription = "每次启动模组管理器时检查汉化版和官方英文版是否发布了新版本。\n此功能只显示提醒并引导你查看汉化版发布页面，不会下载、退出程序或覆盖汉化文件。";
+
+	public static string ChineseUpdateAvailable(string latestTag, Version installedVersion, int installedRevision)
+		=> $"发现新的汉化版：{latestTag}。\n"
+		 + $"当前安装版本基于 {installedVersion}，汉化修订版 r{installedRevision}。程序不会自动下载或覆盖文件。";
 
 	public static string OfficialUpdateAvailable(string officialVersion, Version installedVersion)
 		=> $"官方英文版已发布 {officialVersion}，当前汉化版基于 {installedVersion}。\n"
 		 + "请前往汉化版发布页面查看是否已有对应版本。程序不会自动下载或覆盖文件。";
 
 	public static string OfficialBaseIsCurrent(Version installedVersion)
-		=> $"当前汉化版基于官方版本 {installedVersion}，该基础版本目前已是最新。\n"
+		=> $"当前汉化版基于官方版本 {installedVersion}，汉化修订版和官方基础版本目前均已是最新。\n"
 		 + "检查更新功能只负责提醒，不会修改或覆盖汉化文件。";
 
 	public static string CheckFailed(string message) => $"检查更新时发生错误：{message}";

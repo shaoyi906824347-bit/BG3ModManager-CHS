@@ -18,7 +18,7 @@ public class TempFile : IDisposable
 		_bufferSize = bufferSize;
 		var tempDir = DivinityApp.GetAppDirectory("Temp");
 		Directory.CreateDirectory(tempDir);
-		_path = Path.Join(tempDir, Path.GetFileName(sourcePath));
+		_path = Path.Join(tempDir, $"{Guid.NewGuid():N}{Path.GetExtension(sourcePath)}");
 		_sourcePath = sourcePath;
 		_stream = File.Create(_path, _bufferSize, FileOptions.Asynchronous | FileOptions.DeleteOnClose);
 	}
@@ -39,13 +39,15 @@ public class TempFile : IDisposable
 
 	private async Task CopyAsync(CancellationToken token)
 	{
-		using var sourceStream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+		using var sourceStream = new FileStream(_sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
 		await sourceStream.CopyToAsync(_stream, _bufferSize, token);
+		_stream.Position = 0;
 	}
 
 	private async Task CopyAsync(Stream sourceStream, CancellationToken token)
 	{
 		await sourceStream.CopyToAsync(_stream, _bufferSize, token);
+		_stream.Position = 0;
 	}
 
 	public void Dispose()

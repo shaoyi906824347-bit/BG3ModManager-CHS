@@ -131,6 +131,7 @@ public static class DivinityFileUtils
 	#region Package Creation Async
 	public static async Task<bool> CreatePackageAsync(string rootPath, List<string> inputPaths, string outputPath, CancellationToken token, List<string> ignoredFiles = null)
 	{
+		var success = false;
 		try
 		{
 			ignoredFiles ??= IgnoredPackageFiles;
@@ -157,10 +158,13 @@ public static class DivinityFileUtils
 				if (token.IsCancellationRequested) break;
 				AddFilesToPackage(f, build, rootPath, ignoredFiles, token);
 			}
+			if (token.IsCancellationRequested) return false;
 
 			DivinityApp.Log($"Writing package '{outputPath}'.");
 			using var writer = PackageWriterFactory.Create(build, outputPath);
-			writer.Write();
+			await Task.Run(writer.Write, token);
+			token.ThrowIfCancellationRequested();
+			success = true;
 			return true;
 		}
 		catch (Exception ex)
@@ -174,6 +178,10 @@ public static class DivinityFileUtils
 				DivinityApp.Log($"Cancelled creating package: {ex}");
 			}
 			return false;
+		}
+		finally
+		{
+			if (!success) TryDeleteFile(outputPath);
 		}
 	}
 
@@ -209,33 +217,6 @@ public static class DivinityFileUtils
 		}
 	}
 
-	private static Task WritePackageAsync(PackageWriter writer, string outputPath, CancellationToken token)
-	{
-		var task = Task.Run(async () =>
-		{
-			// execute actual operation in child task
-			var childTask = Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					writer.Write();
-				}
-				catch (Exception)
-				{
-					// ignored because an exception on a cancellation request 
-					// cannot be avoided if the stream gets disposed afterwards 
-				}
-			}, TaskCreationOptions.AttachedToParent);
-
-			var awaiter = childTask.GetAwaiter();
-			while (!awaiter.IsCompleted)
-			{
-				await Task.Delay(0, token);
-			}
-		}, token);
-
-		return task;
-	}
 	#endregion
 
 	public static bool ExtractPackages(IEnumerable<string> pakPaths, string outputDirectory)
@@ -344,14 +325,15 @@ public static class DivinityFileUtils
 	{
 		try
 		{
-			using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
-			var result = new byte[file.Length];
-			var totalBytesRead = await file.ReadAsync(result.AsMemory(0, (int)file.Length), token);
-			return result;
+			return await File.ReadAllBytesAsync(path, token);
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
 		}
 		catch (Exception ex)
 		{
-			DivinityApp.Log($"Error writing file: {ex}");
+			DivinityApp.Log($"Error reading file: {ex}");
 		}
 		return null;
 	}
@@ -368,8 +350,25 @@ public static class DivinityFileUtils
 		catch (Exception ex)
 		{
 			DivinityApp.Log($"Error copying file: {ex}");
+			TryDeleteFile(copyToPath);
 		}
 		return false;
+	}
+
+	public static bool TryDeleteFile(string path)
+	{
+		if (String.IsNullOrWhiteSpace(path) || !File.Exists(path)) return true;
+
+		try
+		{
+			File.Delete(path);
+			return true;
+		}
+		catch (Exception ex)
+		{
+			DivinityApp.Log($"Error deleting file '{path}': {ex}");
+			return false;
+		}
 	}
 
 	public static bool TryGetDirectoryOrParent(string path, out string parentDir)
@@ -389,7 +388,7 @@ public static class DivinityFileUtils
 				return true;
 			}
 		}
-		catch (Exception ex) { }
+		catch (Exception) { }
 		return false;
 	}
 
@@ -405,7 +404,7 @@ public static class DivinityFileUtils
 				return true;
 			}
 		}
-		catch (Exception ex) { }
+		catch (Exception) { }
 		return false;
 	}
 

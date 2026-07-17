@@ -343,10 +343,8 @@ public static partial class DivinityModDataLoader
 		if (File.Exists(metaFile))
 		{
 			using var fileStream = GetAsyncStream(metaFile);
-			var result = new byte[fileStream.Length];
-			await fileStream.ReadAsync(result, 0, (int)fileStream.Length, token);
-
-			string str = Encoding.UTF8.GetString(result, 0, result.Length);
+			using var reader = new StreamReader(fileStream, Encoding.UTF8, true);
+			string str = await reader.ReadToEndAsync(token);
 
 			if (!String.IsNullOrEmpty(str))
 			{
@@ -963,19 +961,19 @@ public static partial class DivinityModDataLoader
 
 	public static async Task<Resource> LoadResourceAsync(string path, LSLib.LS.Enums.ResourceFormat resourceFormat, ResourceLoadParameters resourceParams = null)
 	{
-		try
+		return await Task.Run(() =>
 		{
-			using var fs = File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
-			await fs.ReadAsync(new byte[fs.Length], 0, (int)fs.Length);
-			fs.Position = 0;
-			var resource = LSLib.LS.ResourceUtils.LoadResource(fs, resourceFormat, resourceParams ?? _loadParams);
-			return resource;
-		}
-		catch (Exception ex)
-		{
-			DivinityApp.Log($"Error loading '{path}': {ex}");
-			return null;
-		}
+			try
+			{
+				using var fs = File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
+				return LSLib.LS.ResourceUtils.LoadResource(fs, resourceFormat, resourceParams ?? _loadParams);
+			}
+			catch (Exception ex)
+			{
+				DivinityApp.Log($"Error loading '{path}': {ex}");
+				return null;
+			}
+		});
 	}
 
 	public static async Task<Resource> LoadResourceAsync(System.IO.Stream stream, LSLib.LS.Enums.ResourceFormat resourceFormat)
