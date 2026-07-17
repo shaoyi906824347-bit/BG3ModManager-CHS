@@ -462,7 +462,7 @@
 									<controls:AutoGrayableImage Source="{StaticResource RefreshImage}" />
 								</Button>
 								<Rectangle />
-								<TextBlock Text="快捷目录" />
+								<TextBlock Text="打开mod文件夹" />
 								<Button x:Name="OpenModsFolderButton" ToolTip="打开模组存放文件夹（Mods）">
 									<controls:AutoGrayableImage Source="{StaticResource OpenFolderImage}" />
 									<Button.ContextMenu>
@@ -498,14 +498,6 @@
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
-								<Rectangle />
-								<TextBlock Text="支持与反馈" />
-								<Button x:Name="OpenDonationPageButton" ToolTip="打开赞助页面 (Ko-fi)&#x0a;https://ko-fi.com/laughingleader">
-									<controls:AutoGrayableImage Source="{StaticResource OpenDonationLinkImage}" />
-								</Button>
-								<Button x:Name="OpenRepoPageButton" ToolTip="打开官方 GitHub 项目主页">
-									<controls:AutoGrayableImage Source="{StaticResource OpenRepoLinkImage}" />
-								</Button>
 							</StackPanel>
 						</Grid>
 						<Grid Grid.Column="3" />

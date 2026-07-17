@@ -9,8 +9,8 @@ public enum DivinityGameLaunchWindowAction
 {
 	[Description("无")]
 	None,
-	[Description("最小化管理器")]
+	[Description("启动游戏后自动最小化")]
 	Minimize,
-	[Description("关闭管理器")]
+	[Description("启动游戏后自动退出")]
 	Close
 }

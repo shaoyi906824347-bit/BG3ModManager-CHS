@@ -229,6 +229,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 	[Reactive] public bool AppSettingsLoaded { get; set; }
 	[Reactive] public bool IsRefreshing { get; private set; }
 	[Reactive] public bool IsRefreshingModUpdates { get; private set; }
+	[Reactive] public bool IsExporting { get; private set; }
 
 	private readonly ObservableAsPropertyHelper<bool> _isLocked;
 
@@ -1762,6 +1763,8 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		}
 
 		IsLoadingOrder = true;
+		try
+		{
 
 		var currentOrder = new DivinityLoadOrder()
 		{
@@ -1829,7 +1832,11 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 				DivinityApp.Log($"Error setting next load order:\n{ex}");
 			}
 		}
-		IsLoadingOrder = false;
+		}
+		finally
+		{
+			IsLoadingOrder = false;
+		}
 	}
 
 	private async Task<ImportOperationResults> AddModFromFile(Dictionary<string, DivinityModData> builtinMods, ImportOperationResults taskResult, string filePath, CancellationToken cts, bool? toActiveList = null)
@@ -2095,6 +2102,8 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		if (order == null) return false;
 
 		IsLoadingOrder = true;
+		try
+		{
 
 		var loadFrom = order.Order;
 
@@ -2153,8 +2162,12 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 		OrderJustLoaded = true;
 
-		IsLoadingOrder = false;
 		return true;
+		}
+		finally
+		{
+			IsLoadingOrder = false;
+		}
 	}
 
 	public void MainWindowMessageBox_Closed_ResetColor(object sender, EventArgs e)
@@ -2840,9 +2853,24 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 	private void ExportLoadOrder()
 	{
+		if (IsExporting) return;
+
+		IsExporting = true;
 		RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 		{
-			await ExportLoadOrderAsync();
+			try
+			{
+				await ExportLoadOrderAsync();
+			}
+			catch (Exception ex)
+			{
+				DivinityApp.Log($"Error exporting load order:\n{ex}");
+				RxApp.MainThreadScheduler.Schedule(() => ShowAlert("导出模组顺序时发生错误，请重试。", AlertType.Danger));
+			}
+			finally
+			{
+				RxApp.MainThreadScheduler.Schedule(() => IsExporting = false);
+			}
 			return Disposable.Empty;
 		});
 	}
@@ -2856,16 +2884,19 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			backupOrder.SetOrder(SelectedModOrder);
 
 			await DivinityModDataLoader.ExportLoadOrderToFileAsync(backupOrderPath, backupOrder);
-			var updatedOrder = false;
-			foreach (var order in ModOrderList)
+			await Observable.Start(() =>
 			{
-				if (order.FilePath == backupOrderPath)
+				var updatedOrder = false;
+				foreach (var order in ModOrderList)
 				{
-					order.SetOrder(backupOrder);
-					updatedOrder = true;
+					if (order.FilePath == backupOrderPath)
+					{
+						order.SetOrder(backupOrder);
+						updatedOrder = true;
+					}
 				}
-			}
-			if (!updatedOrder) AddNewModOrder(backupOrder);
+				if (!updatedOrder) AddNewModOrder(backupOrder);
+			}, RxApp.MainThreadScheduler);
 		}
 		catch (Exception ex)
 		{
@@ -2898,7 +2929,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 	{
 		if (SelectedProfile != null && SelectedModOrder != null)
 		{
-			UpdateOrderFromActiveMods();
+			await Observable.Start(UpdateOrderFromActiveMods, RxApp.MainThreadScheduler);
 			DeleteModCrashSanityCheck();
 
 			var outputAdventureMod = SelectedAdventureMod;
@@ -3540,16 +3571,32 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			MessageBoxButton.OKCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, Window.MessageBoxStyle);
 		if (result == MessageBoxResult.OK)
 		{
+			IsExporting = true;
 			MainProgressTitle = "正在将已启用模组添加到压缩包...";
 			MainProgressWorkText = "";
 			MainProgressValue = 0d;
 			MainProgressIsActive = true;
 			RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 			{
-				MainProgressToken = new CancellationTokenSource();
-				await ExportLoadOrderToArchiveAsync("", MainProgressToken.Token);
-				await ctrl.Yield();
-				RxApp.MainThreadScheduler.Schedule(_ => OnMainProgressComplete());
+				try
+				{
+					MainProgressToken = new CancellationTokenSource();
+					await ExportLoadOrderToArchiveAsync("", MainProgressToken.Token);
+				}
+				catch (Exception ex)
+				{
+					DivinityApp.Log($"Error exporting load order archive:\n{ex}");
+					RxApp.MainThreadScheduler.Schedule(() => ShowAlert("创建 ZIP 压缩包时发生错误，请重试。", AlertType.Danger));
+				}
+				finally
+				{
+					await ctrl.Yield();
+					RxApp.MainThreadScheduler.Schedule(_ =>
+					{
+						OnMainProgressComplete();
+						IsExporting = false;
+					});
+				}
 				return Disposable.Empty;
 			});
 		}
@@ -3733,6 +3780,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 			if (dialog.ShowDialog(Window) == true)
 			{
+				IsExporting = true;
 				MainProgressTitle = "正在将已启用模组添加到压缩包...";
 				MainProgressWorkText = "";
 				MainProgressValue = 0d;
@@ -3740,10 +3788,25 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 				RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 				{
-					MainProgressToken = new CancellationTokenSource();
-					await ExportLoadOrderToArchiveAsync(dialog.FileName, MainProgressToken.Token);
-					await ctrl.Yield();
-					RxApp.MainThreadScheduler.Schedule(_ => OnMainProgressComplete());
+					try
+					{
+						MainProgressToken = new CancellationTokenSource();
+						await ExportLoadOrderToArchiveAsync(dialog.FileName, MainProgressToken.Token);
+					}
+					catch (Exception ex)
+					{
+						DivinityApp.Log($"Error exporting load order archive:\n{ex}");
+						RxApp.MainThreadScheduler.Schedule(() => ShowAlert("创建 ZIP 压缩包时发生错误，请重试。", AlertType.Danger));
+					}
+					finally
+					{
+						await ctrl.Yield();
+						RxApp.MainThreadScheduler.Schedule(_ =>
+						{
+							OnMainProgressComplete();
+							IsExporting = false;
+						});
+					}
 					return Disposable.Empty;
 				});
 			}
@@ -4939,7 +5002,8 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			UpdateNexusModsLimitsCommand.Execute(e);
 		};
 
-		_isLocked = this.WhenAnyValue(x => x.IsDragging, x => x.IsRefreshing, x => x.IsLoadingOrder, (b1, b2, b3) => b1 || b2 || b3).ToProperty(this, nameof(IsLocked));
+		_isLocked = this.WhenAnyValue(x => x.IsDragging, x => x.IsRefreshing, x => x.IsLoadingOrder, x => x.IsExporting,
+			(b1, b2, b3, b4) => b1 || b2 || b3 || b4).ToProperty(this, nameof(IsLocked));
 
 		_allowDrop = this.WhenAnyValue(x => x.IsLoadingOrder, x => x.IsRefreshing, x => x.IsInitialized, (b1, b2, b3) => !b1 && !b2 && b3)
 			.ToProperty(this, nameof(AllowDrop), initialValue: true);
@@ -5012,7 +5076,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 		Keys.RefreshModUpdates.AddAction(() => RefreshModUpdatesCommand.Execute(Unit.Default).Subscribe(), canRefreshModUpdates);
 
-		IObservable<bool> canStartExport = this.WhenAny(x => x.MainProgressToken, (t) => t != null).StartWith(false);
+		IObservable<bool> canStartExport = this.WhenAnyValue(x => x.MainProgressIsActive, active => !active);
 		Keys.ExportOrderToZip.AddAction(ExportLoadOrderToArchive_Start, canStartExport);
 		Keys.ExportOrderToArchiveAs.AddAction(ExportLoadOrderToArchiveAs, canStartExport);
 
@@ -5024,11 +5088,6 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		Keys.ImportOrderFromSaveAsNew.AddAction(ImportOrderFromSaveAsNew, canOpenDialogWindow);
 		Keys.ImportOrderFromFile.AddAction(ImportOrderFromFile, canOpenDialogWindow);
 		Keys.ImportOrderFromZipFile.AddAction(ImportOrderFromArchive, canOpenDialogWindow);
-
-		Keys.OpenDonationLink.AddAction(() =>
-		{
-			ProcessHelper.TryOpenUrl(DivinityApp.URL_DONATION);
-		});
 
 		Keys.OpenRepositoryPage.AddAction(() =>
 		{

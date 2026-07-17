@@ -64,7 +64,6 @@
 	<BitmapImage x:Key="LoadCampaignOrderImage" UriSource="pack://application:,,,/Resources/Icons/LoadCampaignOrder_16x.png" />
 	<BitmapImage x:Key="LogImage" UriSource="pack://application:,,,/Resources/Icons/Log_Normal_32x.png" />
 	<BitmapImage x:Key="MissingDependencyIcon" UriSource="pack://application:,,,/Resources/Icons/FileMissing_16x.png" />
-	<BitmapImage x:Key="OpenDonationLinkImage" UriSource="pack://application:,,,/Resources/Icons/Kofi_16x.png" />
 	<BitmapImage x:Key="OpenFolderImage" UriSource="pack://application:,,,/Resources/Icons/OpenFolder_16x.png" />
 	<BitmapImage x:Key="OpenGameImage" UriSource="pack://application:,,,/Resources/Icons/BG3_64x.png" />
 	<BitmapImage x:Key="OpenInBrowserImage" UriSource="pack://application:,,,/Resources/Icons/BrowserLink_16x.png" />

@@ -129,9 +129,6 @@ public class AppKeys : ReactiveObject
 	[MenuSettings("帮助", "检查模组管理器更新")]
 	public Hotkey CheckForUpdates { get; private set; } = new Hotkey(Key.F7);
 
-	[MenuSettings("帮助", "打开赞助页面（Ko-fi）...", Tooltip = "打开 https://ko-fi.com/laughingleader 赞助软件作者")]
-	public Hotkey OpenDonationLink { get; private set; } = new Hotkey(Key.F10);
-
 	[MenuSettings("帮助", "关于软件")]
 	public Hotkey OpenAboutWindow { get; private set; } = new Hotkey(Key.F1);
 
