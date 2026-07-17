@@ -22,7 +22,7 @@ The localization is compiled into the program files. Do not use the in-app “Do
 
 ---
 
-# LaughingLeader's Baldur's Gate 3 Mod Manager
+# LaughingLeader 的《博德之门 3》模组管理器 / Baldur's Gate 3 Mod Manager
 
 A mod manager for [Baldur's Gate 3](https://store.steampowered.com/app/1086940/Baldurs_Gate_3/).
 
