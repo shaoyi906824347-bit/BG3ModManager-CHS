@@ -7,10 +7,11 @@
 		<Setter Property="FontFamily" Value="Segoe UI" />
 		<Setter Property="TextAlignment" Value="Left" />
 		<Setter Property="Background" Value="{DynamicResource {x:Static adonisUI:Brushes.Layer1BackgroundBrush}}" />
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUI:Brushes.ForegroundBrush}}" />
 	</Style>
 	<Style x:Key="H1Style" BasedOn="{StaticResource {x:Type Paragraph}}" TargetType="Paragraph">
 		<Setter Property="FontSize" Value="32" />
-		<Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUI:Brushes.AccentForegroundBrush}}" />
+		<Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUI:Brushes.ForegroundBrush}}" />
 		<Setter Property="FontWeight" Value="Normal" />
 		<!-- <Setter Property="TextDecorations" Value="Underline" /> -->
 		<Setter Property="Padding" Value="0" />

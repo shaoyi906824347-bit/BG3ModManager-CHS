@@ -1,8 +1,6 @@
 using AdonisUI;
 using AdonisUI.Controls;
 
-using AutoUpdaterDotNET;
-
 using DivinityModManager.Controls;
 using DivinityModManager.Extensions;
 using DivinityModManager.Models;
@@ -351,12 +349,6 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 		Application.Current.Shutdown();
 	}
 
-	private void AutoUpdater_OnClosing()
-	{
-		ViewModel.Settings.LastUpdateCheck = DateTimeOffset.Now.ToUnixTimeSeconds();
-		OnClosing();
-	}
-
 	private WindowInteropHelper _wih;
 
 	public void FlashTaskbar()
@@ -431,8 +423,6 @@ public partial class MainWindow : AdonisWindow, IViewFor<MainWindowViewModel>, I
 		this.TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
 
 		Closed += (o, e) => OnClosing();
-		AutoUpdater.ApplicationExitEvent += AutoUpdater_OnClosing;
-
 		DataContext = ViewModel;
 
 		_wih = new WindowInteropHelper(this);

@@ -8,7 +8,7 @@ public class AboutWindowViewModel : ReactiveObject
 
 	public AboutWindowViewModel()
 	{
-		Title = "关于软件";
+		Title = Localization.WindowText.About;
 	}
 }
 

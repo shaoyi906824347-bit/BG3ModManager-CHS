@@ -3,6 +3,7 @@ using AutoUpdaterDotNET;
 
 using DivinityModManager.AppServices;
 using DivinityModManager.Extensions;
+using DivinityModManager.Localization;
 using DivinityModManager.Models;
 using DivinityModManager.Models.App;
 using DivinityModManager.Models.Extender;
@@ -4980,7 +4981,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		var productName = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute), false)).Product;
 		AppTitle = productName;
 		Version = assembly.GetName().Version;
-		Title = $"{productName} {Version}";
+		Title = BrandText.GetWindowTitle(productName, Version);
 		AutoUpdater.InstalledVersion = Version;
 		AutoUpdater.AppTitle = Title;
 		DivinityApp.Log($"{Title} initializing...");
@@ -5421,11 +5422,11 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			if (ActiveMods.Count > 0)
 			{
 				var text = string.Join(", ", ActiveMods.Select(x => x.DisplayName));
-				Services.ScreenReader.Speak($"{ActiveMods.Count} mods in the active order, including:\n{text}", true);
+				Services.ScreenReader.Speak($"当前加载顺序中有 {ActiveMods.Count} 个已启用模组，包括：\n{text}", true);
 			}
 			else
 			{
-				Services.ScreenReader.Speak($"Zero mods are active.", true);
+				Services.ScreenReader.Speak("当前没有已启用的模组。", true);
 			}
 		});
 

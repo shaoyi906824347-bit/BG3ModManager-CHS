@@ -2,6 +2,7 @@ using AutoUpdaterDotNET;
 
 using DivinityModManager.Util;
 using DivinityModManager.Views;
+using DivinityModManager.Localization;
 
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -28,25 +29,12 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 
 	private static readonly Regex RemoveEmptyLinesPattern = RemoveEmptyLinesRe();
 
-	private UpdateInfoEventArgs? _updateArgs;
-
-	private void TryRunUpdate()
+	private void OpenChineseReleasePage()
 	{
-		try
-		{
-			MainWindow.Self.ViewModel.Settings.LastUpdateCheck = DateTimeOffset.Now.ToUnixTimeSeconds();
-			MainWindow.Self.ViewModel.SaveSettings();
-			if (AutoUpdater.DownloadUpdate(_updateArgs))
-			{
-				System.Windows.Application.Current.Shutdown();
-			}
-			Environment.Exit(0);
-		}
-		catch (Exception ex)
-		{
-			DivinityApp.Log($"Error updating program:\n{ex}");
-			IsVisible = false;
-		}
+		MainWindow.Self.ViewModel.Settings.LastUpdateCheck = DateTimeOffset.Now.ToUnixTimeSeconds();
+		MainWindow.Self.ViewModel.SaveSettings();
+		ProcessHelper.TryOpenUrl(DivinityApp.URL_CHS_RELEASES);
+		IsVisible = false;
 	}
 
 	private bool _showAlert;
@@ -65,25 +53,23 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 				}, RxApp.MainThreadScheduler);
 			}
 
-			_updateArgs = args;
-
 			if (args.IsUpdateAvailable)
 			{
-				UpdateDescription = $"已检测到新版本 {args.CurrentVersion}。\n当前已安装的版本为 {AppVersion}。\n【注意】当前运行的是汉化版本。如果更新，汉化将被官方英文版本覆盖！";
+				UpdateDescription = UpdateText.OfficialUpdateAvailable(args.CurrentVersion, AppVersion);
 
 				CanConfirm = true;
-				SkipButtonText = "跳过";
+				SkipButtonText = CommonText.Close;
 				CanSkip = true;
 				UpdateVersion = Version.Parse(args.CurrentVersion);
-				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert("发现新版本！", AlertType.Success, 20);
+				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert(UpdateText.UpdateFoundAlert, AlertType.Info, 20);
 			}
 			else
 			{
-				UpdateDescription = $"{AppTitle} 已是最新版本。\n当前已安装的版本为 {AppVersion}。";
+				UpdateDescription = UpdateText.OfficialBaseIsCurrent(AppVersion);
 				CanConfirm = false;
 				CanSkip = true;
-				SkipButtonText = "关闭";
-				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert("已经是最新版本", AlertType.Info, 20);
+				SkipButtonText = CommonText.Close;
+				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert(UpdateText.NoUpdateAlert, AlertType.Info, 20);
 			}
 
 			if (args.IsUpdateAvailable || _showAlert)
@@ -97,11 +83,11 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 		catch(Exception ex)
 		{
 			DivinityApp.Log($"Error checking for update:\n{ex}");
-			if (_showAlert) MainWindow.Self.ViewModel.ShowAlert($"检查更新时发生错误：{ex.Message}", AlertType.Danger, 60);
+			if (_showAlert) MainWindow.Self.ViewModel.ShowAlert(UpdateText.CheckFailed(ex.Message), AlertType.Danger, 60);
 
 			if (ex is System.Net.WebException)
 			{
-				MainWindow.Self.DisplayError("更新检查失败", "连接更新服务器时遇到问题。请检查您的网络连接并重试。", false);
+				MainWindow.Self.DisplayError(UpdateText.CheckFailedTitle, UpdateText.NetworkError, false);
 			}
 		}
 	}
@@ -124,7 +110,7 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 		var canConfirm = this.WhenAnyValue(x => x.CanConfirm);
 		ConfirmCommand = ReactiveCommand.Create(() =>
 		{
-			TryRunUpdate();
+			OpenChineseReleasePage();
 		}, canConfirm, RxApp.MainThreadScheduler);
 
 		var canSkip = this.WhenAnyValue(x => x.CanSkip);

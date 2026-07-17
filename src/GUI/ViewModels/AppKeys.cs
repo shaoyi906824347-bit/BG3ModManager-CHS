@@ -1,6 +1,7 @@
 
 
 using DivinityModManager.Models.App;
+using DivinityModManager.Localization;
 using DivinityModManager.Util;
 
 using DynamicData;
@@ -15,124 +16,124 @@ namespace DivinityModManager.ViewModels;
 
 public class AppKeys : ReactiveObject
 {
-	[MenuSettings("文件", "导入模组 (.pak 文件)...", true)]
+	[MenuSettings(MenuText.File, MenuText.ImportMod, true)]
 	public Hotkey ImportMod { get; private set; } = new Hotkey(Key.O, ModifierKeys.Control);
 
-	[MenuSettings("文件", "新建模组排序配置", true)]
+	[MenuSettings(MenuText.File, MenuText.NewOrder, true)]
 	public Hotkey NewOrder { get; private set; } = new Hotkey(Key.N, ModifierKeys.Control);
 
-	[MenuSettings("文件", "保存当前排序")]
+	[MenuSettings(MenuText.File, MenuText.SaveOrder)]
 	public Hotkey Save { get; private set; } = new Hotkey(Key.S, ModifierKeys.Control);
 
-	[MenuSettings("文件", "另存排序配置为...", true)]
+	[MenuSettings(MenuText.File, MenuText.SaveOrderAs, true)]
 	public Hotkey SaveAs { get; private set; } = new Hotkey(Key.S, ModifierKeys.Control | ModifierKeys.Alt);
 
-	[MenuSettings("文件", "从游戏存档导入模组顺序...")]
+	[MenuSettings(MenuText.File, MenuText.ImportOrderFromSave)]
 	public Hotkey ImportOrderFromSave { get; private set; } = new Hotkey(Key.I, ModifierKeys.Control);
 
-	[MenuSettings("文件", "从存档导入并新建排序配置...")]
+	[MenuSettings(MenuText.File, MenuText.ImportOrderFromSaveAsNew)]
 	public Hotkey ImportOrderFromSaveAsNew { get; private set; } = new Hotkey(Key.I, ModifierKeys.Control | ModifierKeys.Shift);
 
-	[MenuSettings("文件", "从文件导入排序...")]
+	[MenuSettings(MenuText.File, MenuText.ImportOrderFromFile)]
 	public Hotkey ImportOrderFromFile { get; private set; } = new Hotkey(Key.O, ModifierKeys.Control | ModifierKeys.Shift);
 
-	[MenuSettings("文件", "从压缩包 (.zip) 导入模组和排序...", true)]
+	[MenuSettings(MenuText.File, MenuText.ImportOrderFromZip, true)]
 	public Hotkey ImportOrderFromZipFile { get; private set; } = new Hotkey(Key.None);
 
-	[MenuSettings("文件", "应用模组顺序到游戏")]
+	[MenuSettings(MenuText.File, MenuText.ExportOrderToGame)]
 	public Hotkey ExportOrderToGame { get; private set; } = new Hotkey(Key.E, ModifierKeys.Control);
 
-	[MenuSettings("文件", "导出模组列表到文本文件...")]
+	[MenuSettings(MenuText.File, MenuText.ExportOrderToList)]
 	public Hotkey ExportOrderToList { get; private set; } = new Hotkey(Key.E, ModifierKeys.Control | ModifierKeys.Shift);
 
-	[MenuSettings("文件", "打包当前启用的模组为压缩包 (.zip)")]
+	[MenuSettings(MenuText.File, MenuText.ExportOrderToZip)]
 	public Hotkey ExportOrderToZip { get; private set; } = new Hotkey(Key.R, ModifierKeys.Control);
 
-	[MenuSettings("文件", "打包当前启用的模组并另存为...", true)]
+	[MenuSettings(MenuText.File, MenuText.ExportOrderToArchiveAs, true)]
 	public Hotkey ExportOrderToArchiveAs { get; private set; } = new Hotkey(Key.R, ModifierKeys.Control | ModifierKeys.Shift);
 
-	[MenuSettings("文件", "重新加载/刷新所有模组")]
+	[MenuSettings(MenuText.File, MenuText.RefreshAllMods)]
 	public Hotkey Refresh { get; private set; } = new Hotkey(Key.F5);
 
 	//[MenuSettings("File", "Refresh Mod Updates")]
 	public Hotkey RefreshModUpdates { get; private set; } = new Hotkey(Key.None);
 
-	[MenuSettings("编辑", "启用/禁用所选模组 (移动至对侧列表)", true)]
+	[MenuSettings(MenuText.Edit, MenuText.ToggleSelectedMods, true)]
 	public Hotkey Confirm { get; private set; } = new Hotkey(Key.Enter);
 
-	[MenuSettings("编辑", "定位到已启用列表")]
+	[MenuSettings(MenuText.Edit, MenuText.FocusActiveList)]
 	public Hotkey MoveFocusLeft { get; private set; } = new Hotkey(Key.Left);
 
-	[MenuSettings("编辑", "定位到未启用列表")]
+	[MenuSettings(MenuText.Edit, MenuText.FocusInactiveList)]
 	public Hotkey MoveFocusRight { get; private set; } = new Hotkey(Key.Right);
 
-	[MenuSettings("编辑", "切换列表聚焦")]
+	[MenuSettings(MenuText.Edit, MenuText.SwapListFocus)]
 	public Hotkey SwapListFocus { get; private set; } = new Hotkey(Key.Tab);
 
-	[MenuSettings("编辑", "置顶所选模组")]
+	[MenuSettings(MenuText.Edit, MenuText.MoveSelectedToTop)]
 	public Hotkey MoveToTop { get; private set; } = new Hotkey(Key.PageUp, ModifierKeys.Control);
 
-	[MenuSettings("编辑", "置底所选模组", true)]
+	[MenuSettings(MenuText.Edit, MenuText.MoveSelectedToBottom, true)]
 	public Hotkey MoveToBottom { get; private set; } = new Hotkey(Key.PageDown, ModifierKeys.Control);
 
-	[MenuSettings("编辑", "聚焦并搜索当前列表", AddSeparator = true)]
+	[MenuSettings(MenuText.Edit, MenuText.FocusCurrentFilter, AddSeparator = true)]
 	public Hotkey ToggleFilterFocus { get; private set; } = new Hotkey(Key.F, ModifierKeys.Control);
 
-	[MenuSettings("编辑", "显示模组的真实文件名")]
+	[MenuSettings(MenuText.Edit, MenuText.ShowRealFileName)]
 	public Hotkey ToggleFileNameDisplay { get; private set; } = new Hotkey(Key.None);
 
-	[MenuSettings("编辑", "彻底删除所选模组文件...", AddSeparator = true)]
+	[MenuSettings(MenuText.Edit, MenuText.DeleteSelectedMods, AddSeparator = true)]
 	public Hotkey DeleteSelectedMods { get; private set; } = new Hotkey(Key.Delete);
 
-	[MenuSettings("设置", "常规设置")]
+	[MenuSettings(MenuText.Settings, MenuText.GeneralSettings)]
 	public Hotkey OpenPreferences { get; private set; } = new Hotkey(Key.P, ModifierKeys.Control);
 
-	[MenuSettings("设置", "快捷键设置")]
+	[MenuSettings(MenuText.Settings, MenuText.HotkeySettings)]
 	public Hotkey OpenKeybindings { get; private set; } = new Hotkey(Key.K, ModifierKeys.Control);
 
-	[MenuSettings("设置", "切换亮色/暗色主题")]
+	[MenuSettings(MenuText.Settings, MenuText.ToggleTheme)]
 	public Hotkey ToggleViewTheme { get; private set; } = new Hotkey(Key.L, ModifierKeys.Control);
 
 	//[MenuSettings("View", "Toggle Updates View")]
 	public Hotkey ToggleUpdatesView { get; private set; } = new Hotkey();
 
-	[MenuSettings("转到", "打开模组存放文件夹（Mods）")]
+	[MenuSettings(MenuText.GoTo, MenuText.OpenModsFolder)]
 	public Hotkey OpenModsFolder { get; private set; } = new Hotkey(Key.D1, ModifierKeys.Control);
 
-	[MenuSettings("转到", "打开游戏安装目录")]
+	[MenuSettings(MenuText.GoTo, MenuText.OpenGameFolder)]
 	public Hotkey OpenGameFolder { get; private set; } = new Hotkey(Key.D2, ModifierKeys.Control);
 
-	[MenuSettings("转到", "打开脚本扩展器日志文件夹")]
+	[MenuSettings(MenuText.GoTo, MenuText.OpenExtenderLogsFolder)]
 	public Hotkey OpenLogsFolder { get; private set; } = new Hotkey(Key.D4, ModifierKeys.Control);
 
-	[MenuSettings("转到", "启动游戏")]
+	[MenuSettings(MenuText.GoTo, MenuText.LaunchGame)]
 	public Hotkey LaunchGame { get; private set; } = new Hotkey(Key.G, ModifierKeys.Control | ModifierKeys.Shift);
 
-	[MenuSettings("工具", "解压所选模组到指定文件夹...")]
+	[MenuSettings(MenuText.Tools, MenuText.ExtractSelectedMods)]
 	public Hotkey ExtractSelectedMods { get; private set; } = new Hotkey(Key.OemPeriod, ModifierKeys.Control);
 
-	[MenuSettings("工具", "解压所选游戏主线模组到指定文件夹...")]
+	[MenuSettings(MenuText.Tools, MenuText.ExtractSelectedAdventure)]
 	public Hotkey ExtractSelectedAdventure { get; private set; } = new Hotkey(Key.None);
 
-	[MenuSettings("工具", "打开模组版本号生成器...", Tooltip = "模组创作者工具，用于为模组的 meta.lsx 生成版本号")]
+	[MenuSettings(MenuText.Tools, MenuText.OpenVersionGenerator, Tooltip = MenuText.VersionGeneratorTooltip)]
 	public Hotkey ToggleVersionGeneratorWindow { get; private set; } = new Hotkey(Key.G, ModifierKeys.Control);
 
-	[MenuSettings("工具", "在线下载并安装脚本扩展器（Script Extender）...")]
+	[MenuSettings(MenuText.Tools, MenuText.DownloadScriptExtender)]
 	public Hotkey DownloadScriptExtender { get; private set; } = new Hotkey(Key.T, ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt);
 
-	[MenuSettings("工具", "语音朗读当前启用模组顺序")]
+	[MenuSettings(MenuText.Tools, MenuText.SpeakActiveOrder)]
 	public Hotkey SpeakActiveModOrder { get; private set; } = new Hotkey(Key.Home, ModifierKeys.Control);
 
-	[MenuSettings("工具", "停止语音朗读")]
+	[MenuSettings(MenuText.Tools, MenuText.StopSpeaking)]
 	public Hotkey StopSpeaking { get; private set; } = new Hotkey(Key.Home, ModifierKeys.Control | ModifierKeys.Alt);
 
-	[MenuSettings("帮助", "检查模组管理器更新")]
+	[MenuSettings(MenuText.Help, MenuText.CheckForUpdates)]
 	public Hotkey CheckForUpdates { get; private set; } = new Hotkey(Key.F7);
 
-	[MenuSettings("帮助", "关于软件")]
+	[MenuSettings(MenuText.Help, MenuText.About)]
 	public Hotkey OpenAboutWindow { get; private set; } = new Hotkey(Key.F1);
 
-	[MenuSettings("帮助", "打开官方主页（GitHub）...")]
+	[MenuSettings(MenuText.Help, MenuText.OpenOfficialRepository)]
 	public Hotkey OpenRepositoryPage { get; private set; } = new Hotkey(Key.F11);
 
 	private readonly SourceCache<Hotkey, string> keyMap = new((hk) => hk.ID);

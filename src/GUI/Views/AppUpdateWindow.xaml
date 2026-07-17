@@ -6,8 +6,9 @@
 	xmlns:controls="clr-namespace:DivinityModManager.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:DivinityModManager.Views"
+	xmlns:localization="clr-namespace:DivinityModManager.Localization;assembly=DivinityModManagerCore"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Title="检查更新"
+	Title="{x:Static localization:WindowText.CheckForUpdates}"
 	Width="1200"
 	Height="600"
 	TitleBarBackground="#4e38c9"
@@ -44,7 +45,7 @@
 		<TextBlock Grid.Row="2"
 			Padding="4"
 			FontSize="24"
-			Text="更新日志"
+			Text="{x:Static localization:UpdateText.OfficialChangelog}"
 			TextAlignment="Center" />
 		<FlowDocumentScrollViewer x:Name="UpdateChangelogView"
 			Grid.Row="3"
@@ -65,7 +66,7 @@
 			<TextBlock x:Name="UpdateDescription"
 				Padding="0,10"
 				FontSize="18"
-				Foreground="{DynamicResource {x:Static adonisUI:Brushes.AccentForegroundBrush}}"
+				Foreground="{DynamicResource {x:Static adonisUI:Brushes.ForegroundBrush}}"
 				Text=""
 				TextAlignment="Center" />
 			<StackPanel Grid.Row="1"
@@ -76,8 +77,9 @@
 				<Button x:Name="ConfirmButton"
 					HorizontalAlignment="Center"
 					Background="#FF267E26"
-					Content="下载官方版更新"
-					ToolTip="下载官方发布的新版本。官方版本为英文版，可能覆盖当前汉化，请先备份。">
+					MinWidth="180"
+					Content="{x:Static localization:UpdateText.ViewChineseRelease}"
+					ToolTip="{x:Static localization:UpdateText.ViewChineseReleaseTooltip}">
 					<Button.Resources>
 						<Style TargetType="Border">
 							<Setter Property="CornerRadius" Value="5" />
@@ -86,8 +88,8 @@
 				</Button>
 				<Button x:Name="SkipButton"
 					HorizontalAlignment="Center"
-					Content="跳过此版本"
-					ToolTip="跳过当前版本更新">
+					Content="{x:Static localization:CommonText.Close}"
+					ToolTip="{x:Static localization:CommonText.CloseWindowTooltip}">
 					<Button.Resources>
 						<Style TargetType="Border">
 							<Setter Property="CornerRadius" Value="5" />

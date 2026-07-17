@@ -69,7 +69,7 @@ public class DivinityModManagerSettings : ReactiveObject
 	[DataMember, Reactive] public bool AutoAddDependenciesWhenExporting { get; set; }
 
 	[DefaultValue(true)]
-	[SettingsEntry("启动时自动检查管理器更新", "每次启动模组管理器时检查官方是否发布了新版本。")]
+	[SettingsEntry(Localization.UpdateText.CheckOnStartupLabel, Localization.UpdateText.CheckOnStartupDescription)]
 	[DataMember, Reactive] public bool CheckForUpdates { get; set; }
 
 	[DefaultValue("")]

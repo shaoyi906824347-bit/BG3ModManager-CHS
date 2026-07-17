@@ -7,6 +7,7 @@
 	xmlns:data="clr-namespace:DivinityModManager.Models;assembly=DivinityModManagerCore"
 	xmlns:dd="urn:gong-wpf-dragdrop"
 	xmlns:local="clr-namespace:DivinityModManager.Views"
+	xmlns:localization="clr-namespace:DivinityModManager.Localization;assembly=DivinityModManagerCore"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:vm="clr-namespace:DivinityModManager.ViewModels"
 	d:DesignHeight="450"
@@ -36,9 +37,9 @@
 				    ToolTip="会加载进游戏的模组，顺序从上到下依次生效。排在下方的模组通常会覆盖上方模组的同名内容。" />
 				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
 					<TextBlock Text="汉化：" FontSize="11" Opacity="0.8" VerticalAlignment="Center" />
-					<TextBlock Text="可爱女孩王语嫣 (小黑盒 ID: 29602586)" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+					<TextBlock Text="{x:Static localization:BrandText.Translator}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
 					<TextBlock Text="  反馈邮箱：" FontSize="11" Margin="10,0,0,0" Opacity="0.8" VerticalAlignment="Center" />
-					<controls:HyperlinkText DisplayText="bg3modfeedback@163.com" URL="mailto:bg3modfeedback@163.com" FontSize="11" VerticalAlignment="Center" />
+					<controls:HyperlinkText DisplayText="{x:Static localization:BrandText.FeedbackEmail}" URL="mailto:bg3modfeedback@163.com" FontSize="11" VerticalAlignment="Center" />
 				</StackPanel>
 			</Grid>
 			<controls:ModListView

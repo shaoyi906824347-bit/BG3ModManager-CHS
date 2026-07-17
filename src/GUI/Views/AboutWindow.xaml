@@ -7,8 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ext="clr-namespace:DivinityModManager.Controls.Extensions"
     xmlns:local="clr-namespace:DivinityModManager.Views"
+	xmlns:localization="clr-namespace:DivinityModManager.Localization;assembly=DivinityModManagerCore"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="关于软件"
+    Title="{x:Static localization:WindowText.About}"
     Width="600"
     Height="380"
     WindowStartupLocation="CenterOwner"
@@ -53,11 +54,11 @@
 			<TextBlock HorizontalAlignment="Right" Text="汉化：" />
 			<TextBlock Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
-			    Text="可爱女孩王语嫣 (小黑盒 ID: 29602586)" />
+			    Text="{x:Static localization:BrandText.Translator}" />
 			<TextBlock HorizontalAlignment="Right" Text="反馈邮箱：" />
 			<c:HyperlinkText Margin="10,0,0,4"
 			    HorizontalAlignment="Left"
-			    DisplayText="bg3modfeedback@163.com"
+			    DisplayText="{x:Static localization:BrandText.FeedbackEmail}"
 			    URL="mailto:bg3modfeedback@163.com" />
 			<TextBlock HorizontalAlignment="Right" Text="开源许可：" />
 			<c:HyperlinkText Margin="10,0,0,4"

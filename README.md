@@ -8,7 +8,11 @@
 
 从英文版迁移时，只需将原管理器目录中的 `Data` 和 `Orders` 文件夹复制到汉化版目录，即可保留设置、快捷键和模组排序。
 
-请注意：汉化内容编译在程序文件中。不要使用程序内的“下载官方版更新”功能，否则官方英文版可能会覆盖汉化。请等待本仓库发布对应的汉化版更新。
+程序内的“检查更新”采用汉化安全模式：它只检查原版是否发布了新版本，并引导你查看汉化版 Releases 页面，不会自动下载、退出程序或覆盖汉化文件。
+
+参与汉化维护或与原版同步代码时，请先阅读[汉化维护说明](LOCALIZATION.md)。
+
+发布页会同时提供 `SHA256SUMS.txt`。下载后可以核对压缩包的 SHA-256，确认文件完整且未被替换；本次 `r2` 压缩包的校验值为 `8801F1EF805836524459E9A497F3195E42A77E75F6E1E51734C7D19989122C51`。
 
 ## English Description
 
@@ -18,7 +22,7 @@ It keeps the original project's main features and license, and includes an addit
 
 To migrate from the English version, copy the `Data` and `Orders` folders from the original manager directory to the Chinese version directory. This preserves settings, keybindings, and saved mod orders.
 
-The localization is compiled into the program files. Do not use the in-app “Download Official Update” action, as it may replace the Chinese build with the official English version. Please wait for a matching Chinese release from this repository.
+The in-app update check now runs in a localization-safe mode. It only checks whether upstream has released a newer base version and directs users to this repository's Releases page; it never downloads files, exits the app, or overwrites the Chinese build.
 
 ---
 
