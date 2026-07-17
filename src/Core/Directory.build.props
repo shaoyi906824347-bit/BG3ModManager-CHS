@@ -1,5 +1,6 @@
 <Project>
     <PropertyGroup>
-        <BaseIntermediateOutputPath>$(SolutionDir)obj\Core\</BaseIntermediateOutputPath>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\..\obj\Core\</BaseIntermediateOutputPath>
+        <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildThisFileDirectory)obj\**</DefaultItemExcludes>
     </PropertyGroup>
 </Project>

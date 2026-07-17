@@ -91,8 +91,7 @@ public class ModListDropHandler : DefaultDropHandler
 			var files = data.GetFileDropList();
 			foreach (var file in files)
 			{
-				var ext = Path.GetExtension(file).ToLower();
-				if (MainWindowViewModel.IsImportableFile(ext))
+				if (MainWindowViewModel.IsImportableFile(file))
 				{
 					dropInfo.Effects = DragDropEffects.Copy | DragDropEffects.Move;
 					dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;

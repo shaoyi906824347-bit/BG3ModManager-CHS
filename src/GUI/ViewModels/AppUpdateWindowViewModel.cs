@@ -3,6 +3,9 @@ using AutoUpdaterDotNET;
 using DivinityModManager.Util;
 using DivinityModManager.Views;
 using DivinityModManager.Localization;
+using DivinityModManager.Models.App;
+
+using Newtonsoft.Json;
 
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -39,10 +42,29 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 
 	private bool _showAlert;
 
+	private sealed class GithubReleaseData
+	{
+		[JsonProperty("tag_name")]
+		public string TagName { get; set; }
+	}
+
+	private async Task<string> GetAvailableChineseReleaseTagAsync()
+	{
+		var releaseJson = await WebHelper.DownloadUrlAsStringAsync(DivinityApp.URL_CHS_LATEST_RELEASE_API, CancellationToken.None);
+		if (String.IsNullOrWhiteSpace(releaseJson)) return String.Empty;
+
+		var releaseData = DivinityJsonUtils.SafeDeserialize<GithubReleaseData>(releaseJson);
+		if (releaseData == null || !LocalizationReleaseVersion.TryParseTag(releaseData.TagName, out var latestRelease)) return String.Empty;
+
+		var installedRelease = new LocalizationReleaseVersion(AppVersion, DivinityApp.CHS_RELEASE_REVISION);
+		return latestRelease.CompareTo(installedRelease) > 0 ? releaseData.TagName : String.Empty;
+	}
+
 	private async Task OnUpdateCheckAsync(UpdateInfoEventArgs args)
 	{
 		try
 		{
+			var availableChineseReleaseTag = await GetAvailableChineseReleaseTagAsync();
 			var markdownText = await WebHelper.DownloadUrlAsStringAsync(DivinityApp.URL_CHANGELOG_RAW, CancellationToken.None);
 			if (!String.IsNullOrEmpty(markdownText))
 			{
@@ -53,7 +75,15 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 				}, RxApp.MainThreadScheduler);
 			}
 
-			if (args.IsUpdateAvailable)
+			if (!String.IsNullOrWhiteSpace(availableChineseReleaseTag))
+			{
+				UpdateDescription = UpdateText.ChineseUpdateAvailable(availableChineseReleaseTag, AppVersion, DivinityApp.CHS_RELEASE_REVISION);
+				CanConfirm = true;
+				SkipButtonText = CommonText.Close;
+				CanSkip = true;
+				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert(UpdateText.UpdateFoundAlert, AlertType.Info, 20);
+			}
+			else if (args.IsUpdateAvailable)
 			{
 				UpdateDescription = UpdateText.OfficialUpdateAvailable(args.CurrentVersion, AppVersion);
 
@@ -72,7 +102,7 @@ public partial class AppUpdateWindowViewModel : ReactiveObject
 				if (_showAlert) MainWindow.Self.ViewModel.ShowAlert(UpdateText.NoUpdateAlert, AlertType.Info, 20);
 			}
 
-			if (args.IsUpdateAvailable || _showAlert)
+			if (!String.IsNullOrWhiteSpace(availableChineseReleaseTag) || args.IsUpdateAvailable || _showAlert)
 			{
 				RxApp.MainThreadScheduler.Schedule(() =>
 				{

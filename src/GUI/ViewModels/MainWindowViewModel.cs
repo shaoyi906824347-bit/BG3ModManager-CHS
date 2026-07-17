@@ -1842,7 +1842,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 	private async Task<ImportOperationResults> AddModFromFile(Dictionary<string, DivinityModData> builtinMods, ImportOperationResults taskResult, string filePath, CancellationToken cts, bool? toActiveList = null)
 	{
-		var ext = Path.GetExtension(filePath).ToLower();
+		var ext = ImportFileTypeHelper.GetExtension(filePath);
 		if (ext.Equals(".pak", StringComparison.OrdinalIgnoreCase))
 		{
 			var outputFilePath = Path.Combine(PathwayData.AppDataModsPath, Path.GetFileName(filePath));
@@ -1862,6 +1862,10 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 							return Unit.Default;
 						}, RxApp.MainThreadScheduler);
 					}
+				}
+				else
+				{
+					cts.ThrowIfCancellationRequested();
 				}
 			}
 			catch (IOException ex)
@@ -1901,21 +1905,24 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 			RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 			{
-				var builtinMods = DivinityApp.IgnoredMods.Items.SafeToDictionary(x => x.Folder, x => x);
 				MainProgressToken = new CancellationTokenSource();
-				foreach (var f in files)
+				try
 				{
-					await AddModFromFile(builtinMods, result, f, MainProgressToken.Token, toActiveList);
-				}
+					var builtinMods = DivinityApp.IgnoredMods.Items.SafeToDictionary(x => x.Folder, x => x);
+					foreach (var f in files)
+					{
+						MainProgressToken.Token.ThrowIfCancellationRequested();
+						await AddModFromFile(builtinMods, result, f, MainProgressToken.Token, toActiveList);
+					}
 
-				if (UpdateHandler.Nexus.IsEnabled && result.Mods.Count > 0 && result.Mods.Any(x => x.NexusModsData.ModId >= DivinityApp.NEXUSMODS_MOD_ID_START))
-				{
-					await UpdateHandler.Nexus.Update(result.Mods, MainProgressToken.Token);
-				}
+					if (UpdateHandler.Nexus.IsEnabled && result.Mods.Count > 0 && result.Mods.Any(x => x.NexusModsData.ModId >= DivinityApp.NEXUSMODS_MOD_ID_START))
+					{
+						await UpdateHandler.Nexus.Update(result.Mods, MainProgressToken.Token);
+					}
 
-				await ctrl.Yield();
-				RxApp.MainThreadScheduler.Schedule(_ =>
-				{
+					await ctrl.Yield();
+					RxApp.MainThreadScheduler.Schedule(_ =>
+					{
 					IsRefreshing = false;
 					OnMainProgressComplete();
 
@@ -1968,7 +1975,27 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 							ShowAlert($"仅成功导入了 {total}/{result.TotalPaks} 个模组 - 请查看日志", AlertType.Danger, 60);
 						}
 					}
-				});
+					});
+				}
+				catch (OperationCanceledException)
+				{
+					DivinityApp.Log("Cancelled importing mods.");
+					RxApp.MainThreadScheduler.Schedule(() => ShowAlert("已取消导入模组。", AlertType.Warning, 15));
+				}
+				catch (Exception ex)
+				{
+					DivinityApp.Log($"Unexpected error importing mods:\n{ex}");
+					RxApp.MainThreadScheduler.Schedule(() => ShowAlert($"导入模组时发生错误：{ex.Message}", AlertType.Danger, 30));
+				}
+				finally
+				{
+					await ctrl.Yield();
+					RxApp.MainThreadScheduler.Schedule(() =>
+					{
+						IsRefreshing = false;
+						if (MainProgressIsActive) OnMainProgressComplete();
+					});
+				}
 				return Disposable.Empty;
 			});
 		}
@@ -2003,14 +2030,14 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 		return directory;
 	}
 
-	private static readonly List<string> _archiveFormats = new() { ".7z", ".7zip", ".gzip", ".rar", ".tar", ".tar.gz", ".zip" };
-	private static readonly List<string> _compressedFormats = new() { ".bz2", ".xz", ".zst" };
+	private static readonly List<string> _archiveFormats = [.. ImportFileTypeHelper.ArchiveExtensions];
+	private static readonly List<string> _compressedFormats = [.. ImportFileTypeHelper.CompressedExtensions];
 	private static readonly string _archiveFormatsStr = String.Join(";", _archiveFormats.Select(x => "*" + x));
 	private static readonly string _compressedFormatsStr = String.Join(";", _compressedFormats.Select(x => "*" + x));
 
-	public static bool IsImportableFile(string ext)
+	public static bool IsImportableFile(string pathOrExtension)
 	{
-		return ext == ".pak" || _archiveFormats.Contains(ext) || _compressedFormats.Contains(ext);
+		return ImportFileTypeHelper.IsImportable(pathOrExtension);
 	}
 
 	private void OpenModImportDialog()
@@ -2251,8 +2278,6 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			return Unit.Default;
 		}, RxApp.MainThreadScheduler);
 	}
-
-	private CancellationToken workshopModLoadingCancelToken;
 
 	private readonly List<string> ignoredModProjectNames = new() { "Test", "Debug" };
 	private bool CanFetchWorkshopData(DivinityModData mod)
@@ -3113,16 +3138,18 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			};
 			RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 			{
-				var builtinMods = DivinityApp.IgnoredMods.Items.SafeToDictionary(x => x.Folder, x => x);
 				MainProgressToken = new CancellationTokenSource();
-				await ImportArchiveAsync(builtinMods, result, dialog.FileName, false, MainProgressToken.Token);
-				if (result.Mods.Count > 0 && result.Mods.Any(x => x.NexusModsData.ModId >= DivinityApp.NEXUSMODS_MOD_ID_START))
+				try
 				{
-					await UpdateHandler.Nexus.Update(result.Mods, MainProgressToken.Token);
-				}
-				await ctrl.Yield(t);
-				RxApp.MainThreadScheduler.Schedule(_ =>
-				{
+					var builtinMods = DivinityApp.IgnoredMods.Items.SafeToDictionary(x => x.Folder, x => x);
+					await ImportArchiveAsync(builtinMods, result, dialog.FileName, false, MainProgressToken.Token);
+					if (result.Mods.Count > 0 && result.Mods.Any(x => x.NexusModsData.ModId >= DivinityApp.NEXUSMODS_MOD_ID_START))
+					{
+						await UpdateHandler.Nexus.Update(result.Mods, MainProgressToken.Token);
+					}
+					await ctrl.Yield(t);
+					RxApp.MainThreadScheduler.Schedule(_ =>
+					{
 					OnMainProgressComplete();
 
 					if (result.Errors.Count > 0)
@@ -3187,7 +3214,26 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 					{
 						ShowAlert("压缩包提取成功，但未发现任何模组或加载顺序文件", AlertType.Warning, 20);
 					}
-				});
+					});
+				}
+				catch (OperationCanceledException)
+				{
+					DivinityApp.Log($"Cancelled importing archive '{dialog.FileName}'.");
+					RxApp.MainThreadScheduler.Schedule(() => ShowAlert("已取消从压缩包导入。", AlertType.Warning, 15));
+				}
+				catch (Exception ex)
+				{
+					DivinityApp.Log($"Unexpected error importing archive '{dialog.FileName}':\n{ex}");
+					RxApp.MainThreadScheduler.Schedule(() => ShowAlert($"从压缩包导入时发生错误：{ex.Message}", AlertType.Danger, 30));
+				}
+				finally
+				{
+					await ctrl.Yield();
+					RxApp.MainThreadScheduler.Schedule(() =>
+					{
+						if (MainProgressIsActive) OnMainProgressComplete();
+					});
+				}
 				return Disposable.Empty;
 			});
 		}
@@ -3285,8 +3331,6 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			{
 				var info = NexusModFileVersionData.FromFilePath(filePath);
 
-				await fileStream.ReadAsync(new byte[fileStream.Length], 0, (int)fileStream.Length);
-				fileStream.Position = 0;
 				IncreaseMainProgressValue(taskStepAmount);
 				System.IO.Stream decompressionStream = null;
 				TempFile tempFile = null;
@@ -3321,6 +3365,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 						try
 						{
+							tempFile.Stream.Position = 0;
 							var mod = await DivinityModDataLoader.LoadModDataFromPakAsync(outputFilePath, builtinMods, cts, tempFile.Stream);
 							if (mod != null)
 							{
@@ -3344,7 +3389,8 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 								{
 									try
 									{
-										await decompressionStream.CopyToAsync(fs, 4096, cts);
+										tempFile.Stream.Position = 0;
+										await tempFile.Stream.CopyToAsync(fs, 128000, cts);
 										success = true;
 									}
 									catch (Exception ex)
@@ -3353,6 +3399,8 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 										DivinityApp.Log($"Error copying file '{outputName}' from archive to '{outputFilePath}':\n{ex}");
 									}
 								}
+								if (!success) DivinityFileUtils.TryDeleteFile(outputFilePath);
+								cts.ThrowIfCancellationRequested();
 
 								if (success)
 								{
@@ -3367,11 +3415,19 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 								}
 							}
 						}
+						catch (OperationCanceledException)
+						{
+							throw;
+						}
 						catch (Exception ex)
 						{
 							DivinityApp.Log($"Error reading decompressed file '{filePath}' as pak:\n{ex}");
 						}
 					}
+				}
+				catch (OperationCanceledException)
+				{
+					throw;
 				}
 				catch (Exception ex)
 				{
@@ -3391,6 +3447,10 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 				IncreaseMainProgressValue(taskStepAmount);
 			}
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
 		}
 		catch (Exception ex)
 		{
@@ -3426,6 +3486,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			}
 			IncreaseMainProgressValue(taskStepAmount);
 		}
+		cts.ThrowIfCancellationRequested();
 		return success;
 	}
 
@@ -3450,20 +3511,19 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			{
 				var info = NexusModFileVersionData.FromFilePath(archivePath);
 
-				await fileStream.ReadAsync(new byte[fileStream.Length], 0, (int)fileStream.Length);
-				fileStream.Position = 0;
 				IncreaseMainProgressValue(taskStepAmount);
 				using (var archive = ArchiveFactory.OpenArchive(fileStream, _importReaderOptions))
 				{
 					foreach (var file in archive.Entries)
 					{
-						if (cts.IsCancellationRequested) return false;
+						cts.ThrowIfCancellationRequested();
 						if (!file.IsDirectory)
 						{
 							if (file.Key.EndsWith(".pak", StringComparison.OrdinalIgnoreCase))
 							{
 								var outputName = Path.GetFileName(file.Key);
 								var outputFilePath = Path.Combine(outputDirectory, outputName);
+								var entryCopied = false;
 								taskResult.TotalPaks++;
 								using (var entryStream = file.OpenEntryStream())
 								{
@@ -3471,6 +3531,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 									try
 									{
 										await entryStream.CopyToAsync(fs, 4096, cts);
+										entryCopied = true;
 										success = true;
 									}
 									catch (Exception ex)
@@ -3479,8 +3540,10 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 										DivinityApp.Log($"Error copying file '{file.Key}' from archive to '{outputFilePath}':\n{ex}");
 									}
 								}
+								if (!entryCopied) DivinityFileUtils.TryDeleteFile(outputFilePath);
+								cts.ThrowIfCancellationRequested();
 
-								if (success)
+								if (entryCopied)
 								{
 									var mod = await DivinityModDataLoader.LoadModDataFromPakAsync(outputFilePath, builtinMods, cts);
 									if (mod != null)
@@ -3500,14 +3563,16 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 								using var entryStream = file.OpenEntryStream();
 								try
 								{
-									int length = (int)file.Size;
-									var result = new byte[length];
-									await entryStream.ReadAsync(result, 0, length);
-									string text = Encoding.UTF8.GetString(result);
+									using var reader = new StreamReader(entryStream, Encoding.UTF8, true, 4096, true);
+									string text = await reader.ReadToEndAsync(cts);
 									if (!String.IsNullOrWhiteSpace(text))
 									{
 										jsonFiles.Add(Path.GetFileNameWithoutExtension(file.Key), text);
 									}
+								}
+								catch (OperationCanceledException)
+								{
+									throw;
 								}
 								catch (Exception ex)
 								{
@@ -3527,6 +3592,10 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 				IncreaseMainProgressValue(taskStepAmount);
 			}
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
 		}
 		catch (Exception ex)
 		{
@@ -3561,6 +3630,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			}
 			IncreaseMainProgressValue(taskStepAmount);
 		}
+		cts.ThrowIfCancellationRequested();
 		return success;
 	}
 
@@ -3572,6 +3642,7 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 			MessageBoxButton.OKCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, Window.MessageBoxStyle);
 		if (result == MessageBoxResult.OK)
 		{
+			UpdateOrderFromActiveMods();
 			IsExporting = true;
 			MainProgressTitle = "正在将已启用模组添加到压缩包...";
 			MainProgressWorkText = "";
@@ -3605,113 +3676,130 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 	private async Task<bool> ExportLoadOrderToArchiveAsync(string outputPath, CancellationToken t)
 	{
-		var success = false;
-		if (SelectedProfile != null && SelectedModOrder != null)
-		{
-			var sysFormat = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Replace("/", "-");
-			var gameDataFolder = Path.GetFullPath(Settings.GameDataPath);
-			var appDir = DivinityApp.GetAppDirectory();
-			var tempDir = Path.Combine(appDir, "_Temp_" + DateTime.Now.ToString(sysFormat + "_HH-mm-ss"));
-			Directory.CreateDirectory(tempDir);
-
-			if (String.IsNullOrEmpty(outputPath))
-			{
-				var baseOrderName = SelectedModOrder.Name;
-				if (SelectedModOrder.IsModSettings)
-				{
-					baseOrderName = $"{SelectedProfile.Name}_{SelectedModOrder.Name}";
-				}
-				var outputDir = Path.Combine(appDir, "Export");
-				outputPath = Path.Combine(outputDir, $"{baseOrderName}-{DateTime.Now.ToString(sysFormat + "_HH-mm-ss")}.zip");
-				if (!Directory.Exists(outputDir)) Directory.CreateDirectory(outputDir);
-			}
-
-			var modPaks = new List<DivinityModData>(Mods.Where(x => SelectedModOrder.Order.Any(o => o.UUID == x.UUID)));
-			modPaks.AddRange(ForceLoadedMods.Where(x => !x.IsForceLoadedMergedMod));
-
-			var incrementProgress = 1d / modPaks.Count;
-
-			try
-			{
-				using (var stream = File.OpenWrite(outputPath))
-				using (var zipWriter = WriterFactory.OpenWriter(stream, ArchiveType.Zip, _exportWriterOptions))
-				{
-					var orderFileName = DivinityModDataLoader.MakeSafeFilename(Path.Combine(SelectedModOrder.Name + ".json"), '_');
-					var contents = JsonConvert.SerializeObject(SelectedModOrder, Newtonsoft.Json.Formatting.Indented);
-					using (var ms = new System.IO.MemoryStream())
-					{
-						using var swriter = new System.IO.StreamWriter(ms);
-						await swriter.WriteAsync(contents);
-						swriter.Flush();
-						ms.Position = 0;
-						zipWriter.Write(orderFileName, ms);
-					}
-
-					foreach (var mod in modPaks)
-					{
-						if (t.IsCancellationRequested) return false;
-						if (!mod.IsEditorMod)
-						{
-							var fileName = Path.GetFileName(mod.FilePath);
-							await WriteZipAsync(zipWriter, fileName, mod.FilePath, t);
-						}
-						else
-						{
-							var outputPackage = Path.ChangeExtension(Path.Combine(tempDir, mod.Folder), "pak");
-							//Imported Classic Projects
-							if (!mod.Folder.Contains(mod.UUID))
-							{
-								outputPackage = Path.ChangeExtension(Path.Combine(tempDir, mod.Folder + "_" + mod.UUID), "pak");
-							}
-
-							var sourceFolders = new List<string>();
-
-							var modsFolder = Path.Combine(gameDataFolder, $"Mods/{mod.Folder}");
-							var publicFolder = Path.Combine(gameDataFolder, $"Public/{mod.Folder}");
-
-							if (Directory.Exists(modsFolder)) sourceFolders.Add(modsFolder);
-							if (Directory.Exists(publicFolder)) sourceFolders.Add(publicFolder);
-
-							DivinityApp.Log($"Creating package for editor mod '{mod.Name}' - '{outputPackage}'.");
-
-							if (await DivinityFileUtils.CreatePackageAsync(gameDataFolder, sourceFolders, outputPackage, t, DivinityFileUtils.IgnoredPackageFiles))
-							{
-								var fileName = Path.GetFileName(outputPackage);
-								await WriteZipAsync(zipWriter, fileName, outputPackage, t);
-								File.Delete(outputPackage);
-							}
-						}
-
-						RxApp.MainThreadScheduler.Schedule(_ => MainProgressValue += incrementProgress);
-					}
-				}
-
-				RxApp.MainThreadScheduler.Schedule(() =>
-				{
-					ShowAlert($"已将加载顺序导出至 '{outputPath}'", AlertType.Success, 15);
-					ProcessHelper.TryOpenPath(Path.GetDirectoryName(outputPath));
-				});
-
-				success = true;
-			}
-			catch (Exception ex)
-			{
-				RxApp.MainThreadScheduler.Schedule(() =>
-				{
-					string msg = $"写入模组加载顺序压缩包“{outputPath}”时发生错误：{ex}";
-					DivinityApp.Log(msg);
-					ShowAlert(msg, AlertType.Danger);
-				});
-			}
-
-			Directory.Delete(tempDir);
-		}
-		else
+		if (SelectedProfile == null || SelectedModOrder == null)
 		{
 			RxApp.MainThreadScheduler.Schedule(() =>
 			{
 				ShowAlert("当前游戏配置文件或模组加载顺序为空，无法导出。", AlertType.Danger);
 			});
+			return false;
+		}
+
+		var success = false;
+		var outputCreated = false;
+		string tempDir = null;
+
+		try
+		{
+			t.ThrowIfCancellationRequested();
+			var sysFormat = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Replace("/", "-");
+			var gameDataFolder = Path.GetFullPath(Settings.GameDataPath);
+			var appDir = DivinityApp.GetAppDirectory();
+			tempDir = Path.Combine(appDir, "_Temp_" + DateTime.Now.ToString(sysFormat + "_HH-mm-ss-fff"));
+			Directory.CreateDirectory(tempDir);
+
+			if (String.IsNullOrEmpty(outputPath))
+			{
+				var baseOrderName = SelectedModOrder.IsModSettings
+					? $"{SelectedProfile.Name}_{SelectedModOrder.Name}"
+					: SelectedModOrder.Name;
+				baseOrderName = DivinityModDataLoader.MakeSafeFilename(baseOrderName, '_');
+				var outputDir = Path.Combine(appDir, "Export");
+				Directory.CreateDirectory(outputDir);
+				outputPath = Path.Combine(outputDir, $"{baseOrderName}-{DateTime.Now.ToString(sysFormat + "_HH-mm-ss")}.zip");
+			}
+
+			var modPaks = Mods.Where(x => SelectedModOrder.Order.Any(o => o.UUID == x.UUID))
+				.Concat(ForceLoadedMods.Where(x => !x.IsForceLoadedMergedMod))
+				.GroupBy(x => x.FilePath, StringComparer.OrdinalIgnoreCase)
+				.Select(x => x.First())
+				.ToList();
+			var incrementProgress = modPaks.Count > 0 ? 1d / modPaks.Count : 1d;
+
+			using (var stream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
+			{
+				outputCreated = true;
+				using var zipWriter = WriterFactory.OpenWriter(stream, ArchiveType.Zip, _exportWriterOptions);
+				var orderFileName = DivinityModDataLoader.MakeSafeFilename(SelectedModOrder.Name + ".json", '_');
+				var contents = JsonConvert.SerializeObject(SelectedModOrder, Newtonsoft.Json.Formatting.Indented);
+				using (var ms = new MemoryStream())
+				{
+					using var swriter = new StreamWriter(ms, Encoding.UTF8, 4096, true);
+					await swriter.WriteAsync(contents);
+					await swriter.FlushAsync(t);
+					ms.Position = 0;
+					zipWriter.Write(orderFileName, ms);
+				}
+
+				foreach (var mod in modPaks)
+				{
+					t.ThrowIfCancellationRequested();
+					if (!mod.IsEditorMod)
+					{
+						await WriteZipAsync(zipWriter, Path.GetFileName(mod.FilePath), mod.FilePath, t);
+					}
+					else
+					{
+						var outputPackage = Path.ChangeExtension(Path.Combine(tempDir, mod.Folder), "pak");
+						if (!mod.Folder.Contains(mod.UUID))
+						{
+							outputPackage = Path.ChangeExtension(Path.Combine(tempDir, mod.Folder + "_" + mod.UUID), "pak");
+						}
+
+						var sourceFolders = new List<string>();
+						var modsFolder = Path.Combine(gameDataFolder, $"Mods/{mod.Folder}");
+						var publicFolder = Path.Combine(gameDataFolder, $"Public/{mod.Folder}");
+						if (Directory.Exists(modsFolder)) sourceFolders.Add(modsFolder);
+						if (Directory.Exists(publicFolder)) sourceFolders.Add(publicFolder);
+
+						DivinityApp.Log($"Creating package for editor mod '{mod.Name}' - '{outputPackage}'.");
+						if (!await DivinityFileUtils.CreatePackageAsync(gameDataFolder, sourceFolders, outputPackage, t, DivinityFileUtils.IgnoredPackageFiles))
+						{
+							t.ThrowIfCancellationRequested();
+							throw new IOException($"无法为编辑器模组“{mod.DisplayName}”创建临时 .pak 文件。");
+						}
+
+						await WriteZipAsync(zipWriter, Path.GetFileName(outputPackage), outputPackage, t);
+						DivinityFileUtils.TryDeleteFile(outputPackage);
+					}
+
+					RxApp.MainThreadScheduler.Schedule(_ => MainProgressValue += incrementProgress);
+				}
+			}
+
+			t.ThrowIfCancellationRequested();
+			success = true;
+			RxApp.MainThreadScheduler.Schedule(() =>
+			{
+				ShowAlert($"已将加载顺序导出至 '{outputPath}'", AlertType.Success, 15);
+				ProcessHelper.TryOpenPath(Path.GetDirectoryName(outputPath));
+			});
+		}
+		catch (OperationCanceledException)
+		{
+			DivinityApp.Log($"Cancelled exporting load order archive '{outputPath}'.");
+			RxApp.MainThreadScheduler.Schedule(() => ShowAlert("已取消创建 ZIP 压缩包。", AlertType.Warning, 15));
+		}
+		catch (Exception ex)
+		{
+			DivinityApp.Log($"Error writing load order archive '{outputPath}':\n{ex}");
+			RxApp.MainThreadScheduler.Schedule(() =>
+				ShowAlert($"写入模组加载顺序压缩包“{outputPath}”时发生错误：{ex.Message}", AlertType.Danger));
+		}
+		finally
+		{
+			if (!success && outputCreated) DivinityFileUtils.TryDeleteFile(outputPath);
+			if (!String.IsNullOrWhiteSpace(tempDir) && Directory.Exists(tempDir))
+			{
+				try
+				{
+					Directory.Delete(tempDir, true);
+				}
+				catch (Exception ex)
+				{
+					DivinityApp.Log($"Error deleting temporary export directory '{tempDir}': {ex}");
+				}
+			}
 		}
 
 		return success;
@@ -3719,35 +3807,12 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 	private static Task WriteZipAsync(IWriter writer, string entryName, string source, CancellationToken token)
 	{
-		if (token.IsCancellationRequested)
+		token.ThrowIfCancellationRequested();
+		return Task.Run(() =>
 		{
-			return Task.FromCanceled(token);
-		}
-
-		var task = Task.Run(async () =>
-		{
-			// execute actual operation in child task
-			var childTask = Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					writer.Write(entryName, source);
-				}
-				catch (Exception)
-				{
-					// ignored because an exception on a cancellation request
-					// cannot be avoided if the stream gets disposed afterwards
-				}
-			}, TaskCreationOptions.AttachedToParent);
-
-			var awaiter = childTask.GetAwaiter();
-			while (!awaiter.IsCompleted)
-			{
-				await Task.Delay(0, token);
-			}
+			token.ThrowIfCancellationRequested();
+			writer.Write(entryName, source);
 		}, token);
-
-		return task;
 	}
 
 	private void ExportLoadOrderToArchiveAs()
@@ -4605,11 +4670,12 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 
 			RxApp.TaskpoolScheduler.ScheduleAsync(async (ctrl, t) =>
 			{
-				if (MainProgressToken.IsCancellationRequested) return Disposable.Empty;
 				var path = SelectedAdventureMod.FilePath;
 				var success = false;
+				var wasCancelled = false;
 				try
 				{
+					MainProgressToken.Token.ThrowIfCancellationRequested();
 					string pakName = Path.GetFileNameWithoutExtension(path);
 					RxApp.MainThreadScheduler.Schedule(_ => MainProgressWorkText = $"正在提取 {pakName}...");
 					string destination = Path.Combine(outputDirectory, pakName);
@@ -4619,28 +4685,39 @@ public class MainWindowViewModel : BaseHistoryViewModel, IActivatableViewModel, 
 					}
 					openOutputPath = destination;
 					success = await DivinityFileUtils.ExtractPackageAsync(path, destination, MainProgressToken.Token);
+					if (!success) MainProgressToken.Token.ThrowIfCancellationRequested();
+				}
+				catch (OperationCanceledException)
+				{
+					wasCancelled = true;
+					DivinityApp.Log($"Cancelled extracting adventure package '{path}'.");
 				}
 				catch (Exception ex)
 				{
 					DivinityApp.Log($"Error extracting package: {ex}");
 				}
-				IncreaseMainProgressValue(1);
-
-				await ctrl.Yield();
-				RxApp.MainThreadScheduler.Schedule(_ => OnMainProgressComplete());
-
-				RxApp.MainThreadScheduler.Schedule(() =>
+				finally
 				{
-					if (success)
+					IncreaseMainProgressValue(1);
+					await ctrl.Yield();
+					RxApp.MainThreadScheduler.Schedule(() =>
 					{
-						ShowAlert($"成功将冒险模组提取至 '{dialog.SelectedPath}'", AlertType.Success, 20);
-						ProcessHelper.TryOpenPath(openOutputPath);
-					}
-					else
-					{
-						ShowAlert($"提取冒险模组至 '{dialog.SelectedPath}' 时出错", AlertType.Danger, 30);
-					}
-				});
+						OnMainProgressComplete();
+						if (wasCancelled)
+						{
+							ShowAlert("已取消提取冒险模组。", AlertType.Warning, 15);
+						}
+						else if (success)
+						{
+							ShowAlert($"成功将冒险模组提取至 '{dialog.SelectedPath}'", AlertType.Success, 20);
+							ProcessHelper.TryOpenPath(openOutputPath);
+						}
+						else
+						{
+							ShowAlert($"提取冒险模组至 '{dialog.SelectedPath}' 时出错", AlertType.Danger, 30);
+						}
+					});
+				}
 
 				return Disposable.Empty;
 			});
